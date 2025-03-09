@@ -1,0 +1,5 @@
+conda activate DbCAS
+
+D:
+cd D:\File\DbCAS\Web
+python test.py

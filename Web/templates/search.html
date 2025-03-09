@@ -1,0 +1,89 @@
+<!-- templates/home.html -->
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+    <!-- Welcome + Statistic box -->
+    <main class="table">
+        <section class="header">
+            <h1>Key Words:</h1>
+            <div class="right-content">
+                <label for="rowsSelect">Show the top </label>
+                    <select id="rowsSelect">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="all" selected>all</option>
+                    </select>
+                <label for="rowsSelect">relvant results</label>
+            </div>
+        </section>
+        <section class="shell">
+            <table>
+                <thead>
+                    <tr>
+                        <th> DatabaseName</th>
+                        <th> PublicDate </th>
+                        <th> DataType </th>
+                        <th> Species</th>
+                        <th> Tissues </th>
+                        <th> Diseases </th>
+                        <th> Citation </th>
+                        <th> More Detail </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for row in query %}
+                    <tr class="data-row">
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                        <td>{{ row[5] }}</td>
+                        <td>{{ row[6] }}</td>
+                        <td>{{ row[7] }}</td>
+                        <td>{{ row[11] }}</td>
+                        <td>
+                            <button class="expand-btn" onclick="toggleSubTable(this)">Expand</button>
+                        </td>
+                    </tr>
+                    <tr class="sub-row hidden">
+                        <td colspan="8">
+                            <!-- 子表格 (sub-table) -->
+                            <table border="1" width="100%">
+                                <tr>
+                                    <th>Url</th>
+                                    <th>Description</th>
+                                    <th>DataFormat</th>
+                                    <th>DataVolume</th>
+                                    <th>Source</th>
+                                    <th>DOI</th>
+                                </tr>
+                                <tr>
+                                    <td><a href="{{ row[10] }}" target="_blank">{{ row[10] }}</a></td>
+                                    <td>{{ row[12] }}</td>
+                                    <td>{{ row[3] }}</td>
+                                    <td>{{ row[4] }}</td>
+                                    <td>{{ row[8] }}</td>
+                                    <td>{{ row[9] }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+
+
+
+
+
+
+                </tbody>
+            </table>
+        </section>
+
+
+
+     </main>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

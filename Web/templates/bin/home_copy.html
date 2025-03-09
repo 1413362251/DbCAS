@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <!--
+    <link rel="stylesheet" href="/Web/static/css/styles.css">
+    -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='fig/logo_splicelab.png') }}" alt="Logo" class="logo-img">
+        </div>
+        <div class="menu">
+            <a href="{{ url_for('home') }}">HomePage</a>
+            <a href="{{ url_for('search') }}">Web1</a>
+            <a href="#services">Web2</a>
+            <a href="#contact">Help</a>
+            <a href="#home">SpliceLab</a>
+        </div>
+    </div>
+        <!-- Welcome + Statistic box -->
+    <div class="searchbar">
+        <input type="text" placeholder="keywords..." id="searchInput" />
+        <button id="searchButton">Search</button>
+    </div>
+    <!-- Welcome + Statistic box -->
+    <div class="statistic">
+        <h1>Welcome to DbCAS</h1>
+        <p>This blank is for welcome and statistic function </p>
+
+    </div>
+    <div class="footer">
+        <img src="{{ url_for('static', filename='fig/logo_splicelab.png') }}" alt="Logo" class="logo-footer">
+        <img src="{{ url_for('static', filename='fig/logo_southampton.png') }}" alt="Logo" class="logo-footer">
+        <p class="address">
+            School of Biological Sciences<br>
+            Building 85, Highfield Campus<br>
+            University of Southampton<br>
+            Southampton, SO17 1BJ<br>
+            United Kingdom
+        </p>
+        <p class="rights">
+            ©️ 2024 Kif Liakath-Ali. All rights reserved.
+        </p>
+    </div>
+</body>
+</html>

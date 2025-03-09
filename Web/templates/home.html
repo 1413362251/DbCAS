@@ -1,0 +1,68 @@
+<!-- templates/home.html -->
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+    <!-- Welcome + Statistic box -->
+    <div class="statistic">
+        <div class="flip-container" id="flip-container">
+            <div class="flip-card">
+                <!-- 正面：原 logo -->
+                <div class="flip-card-front">
+                  <img src="{{ url_for('static', filename='fig/SpliceLab_big_logo.png') }}" alt="Logo">
+                </div>
+                <!-- 背面：logo1 -->
+                <div class="flip-card-back">
+                  <img src="{{ url_for('static', filename='fig/DbCAS.png') }}" alt="Logo1">
+                </div>
+            </div>
+        </div>
+        <div class="statistic-welcome">
+            <h1>Welcome to DbCAS</h1>
+            <p>This blank is for welcome and statistic function </p>
+            <div class = "statistic-welcome-card-container" >
+                <div class="statistic-welcome-card">
+                    <div class="first-content">
+                        <p>Databases</p>
+                    </div>
+                    <div class="second-content">
+                        <span>99</span>
+                    </div>
+                </div>
+
+                <div class="statistic-welcome-card">
+                    <div class="first-content">
+                        <span>Categories </span>
+                    </div>
+                    <div class="second-content">
+                        <span>16</span>
+                    </div>
+                </div>
+
+                <div class="statistic-welcome-card">
+                    <div class="first-content">
+                        <span>Publications</span>
+                    </div>
+                    <div class="second-content">
+                        <span>86</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="statistic-welcome-claim">
+                <div class="cite">
+                    <h3>Cite Us</h3>
+                    <p>Publication DOI:xxxx </p>
+                </div>
+                <div class="claimer">
+                    <h3>Disclaimer</h3>
+                    <p>This database.... </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

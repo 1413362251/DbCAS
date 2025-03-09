@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Default Title{% endblock %}</title>
+    <!--
+    <link rel="stylesheet" href="/Web/static/css/styles.css">
+    -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='fig/logo_splicelab.png') }}" alt="Logo" class="logo-img">
+        </div>
+        <div class="menu">
+            <a href="{{ url_for('home') }}">HomePage</a>
+            <a href="{{ url_for('search') }}">Search</a>
+            <a href="#services">Web2</a>
+            <a href="#contact">Help</a>
+            <a href="https://www.splicelab.co.uk/" target="_blank">SpliceLab</a>
+        </div>
+    </div>
+        <!-- Welcome + Statistic box -->
+    <div class="main-content">
+        <div class="searchbar">
+            <h1>Find your database:</h1>
+            <div id="search-block">
+                <div class="InputContainer">
+                  <input placeholder="Search.." id="searchInput" class="input" name="text" type="text">
+                </div>
+                <button id="searchButton">Search</button>
+            </div>
+            <p id="search-example">eg.ribosome</p>
+        </div>
+        {% block content %}{% endblock %}
+    </div>
+
+    <div class="footer">
+        <img src="{{ url_for('static', filename='fig/logo_splicelab.png') }}" alt="Logo" class="logo-footer">
+        <img src="{{ url_for('static', filename='fig/logo_southampton.png') }}" alt="Logo" class="logo-footer">
+        <p class="address">
+            School of Biological Sciences<br>
+            Building 85, Highfield Campus<br>
+            University of Southampton<br>
+            Southampton, SO17 1BJ<br>
+            United Kingdom
+        </p>
+        <p class="rights">
+            ©️ 2024 Kif Liakath-Ali. All rights reserved.
+        </p>
+    </div>
+</body>
+</html>
