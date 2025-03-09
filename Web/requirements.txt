@@ -1,0 +1,6 @@
+flask
+gunicorn
+numpy
+sqlite
+pandas
+requests
