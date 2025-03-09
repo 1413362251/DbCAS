@@ -1,7 +1,6 @@
 flask
 gunicorn
 numpy
-sqlite3
 pandas
 requests
 os
