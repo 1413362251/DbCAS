@@ -352,6 +352,10 @@ body {
     height: 25%; /* 自动调整高度以保持比例 */
     object-fit: contain; /* 保证图片适配容器，保持横纵比 */
 }
+#footer-logo {
+    width: 20%; /* 宽度是父元素的20% */
+    height: auto; /* 保持高度自动调整以保持横纵比 */
+}
 
 .address {
 
