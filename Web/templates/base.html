@@ -27,12 +27,12 @@
     <div class="main-content">
         <div class="searchbar">
             <h1>Find your database:</h1>
-            <div id="search-block">
+            <form method="GET" action="/search" id="search-block">
                 <div class="InputContainer">
-                  <input placeholder="Search.." id="searchInput" class="input" name="text" type="text">
+                    <input placeholder="Search..(Defualt:show all databases)" id="searchInput" class="input" name="q" type="text">
                 </div>
-                <button id="searchButton">Search</button>
-            </div>
+                <button id="searchButton" type="submit">Search</button>
+            </form>
             <p id="search-example">eg.ribosome</p>
         </div>
         {% block content %}{% endblock %}

@@ -7,7 +7,14 @@
     <!-- Welcome + Statistic box -->
     <main class="table">
         <section class="header">
-            <h1>Key Words:</h1>
+            <h1>
+                Key Words:
+                {% if keyword %}
+                    <span style="color: red;">{{ keyword }}</span>
+                {% else %}
+                    <span style="color: gray;">(Default:all databases)</span>
+                {% endif %}
+            </h1>
             <div class="right-content">
                 <label for="rowsSelect">Show the top </label>
                     <select id="rowsSelect">
