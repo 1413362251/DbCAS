@@ -1,0 +1,5 @@
+*
+!Programmes/
+!Programmes/**
+!.gitignore
+Programmes/**/*.xlsx

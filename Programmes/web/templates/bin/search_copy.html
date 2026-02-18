@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="/fig/logo_splicelab.png" alt="Logo" class="logo-img">
+        </div>
+        <div class="menu">
+            <a href="#about">HomePage</a>
+            <a href="#about">Web1</a>
+            <a href="#services">Web2</a>
+            <a href="#contact">Help</a>
+            <a href="#home">SpliceLab</a>
+        </div>
+    </div>
+        <!-- Welcome + Statistic box -->
+    <div class="searchbar">
+        <input type="text" placeholder="keywords..." id="searchInput" />
+        <button id="searchButton">Search</button>
+    </div>
+    <!-- Welcome + Statistic box -->
+
+
+     <main class="table">
+        <section class="header">
+            <h1>fyqd</h1>
+            <div class="right-content">
+                <label for="rowsSelect">选择显示行数 (Select Rows): </label>
+                <select id="rowsSelect" onchange="updateRowsDisplay()">
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+        </section>
+        <section class="shell">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cat</th>
+                        <th>MV</th>
+                        <th>PSA</th>
+                        <th>LogP</th>
+                        <th>Rotatable Bonds </th>
+                        <th> H Donors</th>
+                        <th> H Acceptors </th>
+                        <th>Show Structure </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="data-row">
+                        <td>ID1</td>
+                        <td>MV1</td>
+                        <td>PSA1</td>
+                        <td>LogP1</td>
+                        <td>Rotatable Bonds1</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>
+                            <button class="expand-btn" onclick="toggleSubTable(this)">展开 (Expand)</button>
+                        </td>
+                    </tr>
+                    <tr class="sub-row hidden">
+                        <td colspan="5">
+                            <!-- 子表格 (sub-table) -->
+                            <table border="1" width="100%">
+                                <tr>
+                                    <th>子列1 (Sub Column 1)</th>
+                                    <th>子列2 (Sub Column 2)</th>
+                                    <th>子列3 (Sub Column 3)</th>
+                                </tr>
+                                <tr>
+                                    <td>子数据1 (Sub Data 1)</td>
+                                    <td>子数据2 (Sub Data 2)</td>
+                                    <td>子数据3 (Sub Data 3)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="data-row">
+                        <td>ID1</td>
+                        <td>MV1</td>
+                        <td>PSA1</td>
+                        <td>LogP1</td>
+                        <td>Rotatable Bonds1</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>
+                            <button class="expand-btn" onclick="toggleSubTable(this)">展开 (Expand)</button>
+                        </td>
+                    </tr>
+                    <tr class="sub-row hidden">
+                        <td colspan="3">
+                            <!-- 子表格 (sub-table) -->
+                            <table border="1" width="100%">
+                                <tr>
+                                    <th>子列1 (Sub Column 1)</th>
+                                    <th>子列2 (Sub Column 2)</th>
+                                    <th>子列3 (Sub Column 3)</th>
+                                </tr>
+                                <tr>
+                                    <td>子数据1 (Sub Data 1)</td>
+                                    <td>子数据2 (Sub Data 2)</td>
+                                    <td>子数据3 (Sub Data 3)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="data-row">
+                        <td>ID1</td>
+                        <td>MV1</td>
+                        <td>PSA1</td>
+                        <td>LogP1</td>
+                        <td>Rotatable Bonds1</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>
+                            <button class="expand-btn" onclick="toggleSubTable(this)">展开 (Expand)</button>
+                        </td>
+                    </tr>
+                    <tr class="sub-row hidden">
+                        <td colspan="3">
+                            <!-- 子表格 (sub-table) -->
+                            <table border="1" width="100%">
+                                <tr>
+                                    <th>子列1 (Sub Column 1)</th>
+                                    <th>子列2 (Sub Column 2)</th>
+                                    <th>子列3 (Sub Column 3)</th>
+                                </tr>
+                                <tr>
+                                    <td>子数据1 (Sub Data 1)</td>
+                                    <td>子数据2 (Sub Data 2)</td>
+                                    <td>子数据3 (Sub Data 3)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="data-row">
+                        <td>ID1</td>
+                        <td>MV1</td>
+                        <td>PSA1</td>
+                        <td>LogP1</td>
+                        <td>Rotatable Bonds1</td>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>
+                            <button class="expand-btn" onclick="toggleSubTable(this)">展开 (Expand)</button>
+                        </td>
+                    </tr>
+                    <tr class="sub-row hidden">
+                        <td colspan="3">
+                            <!-- 子表格 (sub-table) -->
+                            <table border="1" width="100%">
+                                <tr>
+                                    <th>子列1 (Sub Column 1)</th>
+                                    <th>子列2 (Sub Column 2)</th>
+                                    <th>子列3 (Sub Column 3)</th>
+                                </tr>
+                                <tr>
+                                    <td>子数据1 (Sub Data 1)</td>
+                                    <td>子数据2 (Sub Data 2)</td>
+                                    <td>子数据3 (Sub Data 3)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+     </main>
+
+
+    <div class="footer">
+        <img src="/fig/logo_splicelab.png" alt="Logo" class="logo-footer">
+        <img src="/fig/logo_southampton.png" alt="Logo" class="logo-footer">
+        <p class="address">
+            School of Biological Sciences<br>
+            Building 85, Highfield Campus<br>
+            University of Southampton<br>
+            Southampton, SO17 1BJ<br>
+            United Kingdom
+        </p>
+        <p class="rights">
+            ©️ 2024 Kif Liakath-Ali. All rights reserved.
+        </p>
+    </div>
+    <!-- 连接 JavaScript 文件 -->
+    <script src="/js/main.js"></script>
+</body>
+</html>

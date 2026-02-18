@@ -1,0 +1,238 @@
+<!-- templates/search.html -->
+{% extends "base.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+    <!-- Welcome + Statistic box -->
+    <main class="table">
+        <section class="header">
+            <h1>
+                Keywords:
+                {% if keyword %}
+                    <span style="color: red;">{{ keyword }}</span>
+                {% else %}
+                    <span style="color: gray;">(Default: all databases)</span>
+                {% endif %}
+            </h1>
+            <div class="right-content">
+                <label for="rowsSelect">Show the top </label>
+                    <select id="rowsSelect">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="all" selected>all</option>
+                    </select>
+                <label for="rowsSelect">relevant results</label>
+            </div>
+        </section>
+        <section class="shell">
+            <table>
+                <thead>
+                    <tr>
+                        {% for col in main_columns %}
+                            <th data-col="{{ col.name }}" data-type="{{ col.data_type or '' }}">
+                                {{ col.label }}
+                                {% if col.data_type == "t-word-tag" %}
+                                    <select class="tag-filter" data-col="{{ col.name }}">
+                                        <option value="">All</option>
+                                        {% for tag in tag_options.get(col.name, []) %}
+                                            <option value="{{ tag }}">{{ tag }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% elif col.data_type in ("t-bool", "t-bool-access") %}
+                                    <select class="bool-filter" data-col="{{ col.name }}">
+                                        <option value="">All</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
+                                {% elif col.data_type in ("t-numeric", "t-numeric-cite") %}
+                                    <select class="num-sort" data-col="{{ col.name }}">
+                                        <option value="">Sort</option>
+                                        <option value="asc">ASC</option>
+                                        <option value="desc">DESC</option>
+                                    </select>
+                                {% endif %}
+                            </th>
+                        {% endfor %}
+                        <th> More Details </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for row in query %}
+                    <tr class="data-row">
+                        {% for col in main_columns %}
+                            <td
+                                {% if col.data_type == "t-word-tag" %}
+                                    class="tag-cell"
+                                    data-col="{{ col.name }}"
+                                    data-tags="{{ row[col.name] if row[col.name] is not none else '' }}"
+                                {% elif col.data_type in ("t-bool", "t-bool-access") %}
+                                    class="bool-cell"
+                                    data-col="{{ col.name }}"
+                                    {% if row[col.name] in (1, True, '1', 'true', 'True') %}
+                                        data-bool="true"
+                                    {% elif row[col.name] in (0, False, '0', 'false', 'False') %}
+                                        data-bool="false"
+                                    {% else %}
+                                        data-bool=""
+                                    {% endif %}
+                                {% elif col.data_type in ("t-numeric", "t-numeric-cite") %}
+                                    class="num-cell"
+                                    data-col="{{ col.name }}"
+                                    data-num="{{ row[col.name] if row[col.name] is not none else '' }}"
+                                {% endif %}
+                            >
+                                {% if col.render == "url" %}
+                                    <a href="{{ row[col.name] }}" target="_blank">{{ row[col.name] }}</a>
+                                {% elif col.render == "doi" %}
+                                    {% set doi_value = row[col.name] %}
+                                    {% if doi_value %}
+                                        {% if doi_value.startswith("http://") or doi_value.startswith("https://") %}
+                                            <a href="{{ doi_value }}" target="_blank">{{ doi_value }}</a>
+                                        {% else %}
+                                            <a href="https://doi.org/{{ doi_value }}" target="_blank">{{ doi_value }}</a>
+                                        {% endif %}
+                                    {% endif %}
+                                {% elif col.render == "access" %}
+                                    {% if row[col.name] is none %}
+                                        <span class="status-dot status-unknown" title="Unknown"></span>
+                                        <span>Unknown</span>
+                                    {% elif row[col.name] in (1, True, '1') %}
+                                        <span class="status-dot status-ok" title="Accessible"></span>
+                                        <span>Accessible</span>
+                                    {% else %}
+                                        <span class="status-dot status-bad" title="Not accessible"></span>
+                                        <span>Not accessible</span>
+                                    {% endif %}
+                                {% elif col.data_type == "t-word-tag" %}
+                                    {% set raw_tags = row[col.name] %}
+                                    {% if raw_tags %}
+                                        {% for tag in raw_tags|string|split(";") %}
+                                            {% set tag_text = tag.strip() %}
+                                            {% if tag_text %}
+                                                <div class="tag-item">{{ tag_text }}</div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% else %}
+                                    {{ row[col.name] }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                        <td>
+                            <button class="expand-btn" onclick="toggleSubTable(this)">Expand</button>
+                        </td>
+                    </tr>
+                    <tr class="sub-row hidden">
+                        <td colspan="{{ main_colspan }}">
+                            <!-- 子表格 (sub-table) -->
+                            <table border="1" width="100%">
+                                <tr>
+                                    {% for col in expand_columns %}
+                                        <th data-col="{{ col.name }}" data-type="{{ col.data_type or '' }}">
+                                            {{ col.label }}
+                                            {% if col.data_type == "t-word-tag" %}
+                                                <select class="tag-filter" data-col="{{ col.name }}">
+                                                    <option value="">All</option>
+                                                    {% for tag in tag_options.get(col.name, []) %}
+                                                        <option value="{{ tag }}">{{ tag }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            {% elif col.data_type in ("t-bool", "t-bool-access") %}
+                                                <select class="bool-filter" data-col="{{ col.name }}">
+                                                    <option value="">All</option>
+                                                    <option value="yes">Yes</option>
+                                                    <option value="no">No</option>
+                                                </select>
+                                            {% elif col.data_type in ("t-numeric", "t-numeric-cite") %}
+                                                <select class="num-sort" data-col="{{ col.name }}">
+                                                    <option value="">Sort</option>
+                                                    <option value="asc">ASC</option>
+                                                    <option value="desc">DESC</option>
+                                                </select>
+                                            {% endif %}
+                                        </th>
+                                    {% endfor %}
+                                </tr>
+                                <tr>
+                                    {% for col in expand_columns %}
+                                        <td
+                                            {% if col.data_type == "t-word-tag" %}
+                                                class="tag-cell"
+                                                data-col="{{ col.name }}"
+                                                data-tags="{{ row[col.name] if row[col.name] is not none else '' }}"
+                                            {% elif col.data_type in ("t-bool", "t-bool-access") %}
+                                                class="bool-cell"
+                                                data-col="{{ col.name }}"
+                                                {% if row[col.name] in (1, True, '1', 'true', 'True') %}
+                                                    data-bool="true"
+                                                {% elif row[col.name] in (0, False, '0', 'false', 'False') %}
+                                                    data-bool="false"
+                                                {% else %}
+                                                    data-bool=""
+                                                {% endif %}
+                                            {% elif col.data_type in ("t-numeric", "t-numeric-cite") %}
+                                                class="num-cell"
+                                                data-col="{{ col.name }}"
+                                                data-num="{{ row[col.name] if row[col.name] is not none else '' }}"
+                                            {% endif %}
+                                        >
+                                            {% if col.render == "url" %}
+                                                <a href="{{ row[col.name] }}" target="_blank">{{ row[col.name] }}</a>
+                                            {% elif col.render == "doi" %}
+                                                {% set doi_value = row[col.name] %}
+                                                {% if doi_value %}
+                                                    {% if doi_value.startswith("http://") or doi_value.startswith("https://") %}
+                                                        <a href="{{ doi_value }}" target="_blank">{{ doi_value }}</a>
+                                                    {% else %}
+                                                        <a href="https://doi.org/{{ doi_value }}" target="_blank">{{ doi_value }}</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% elif col.render == "access" %}
+                                                {% if row[col.name] is none %}
+                                                    <span class="status-dot status-unknown" title="Unknown"></span>
+                                                    <span>Unknown</span>
+                                                {% elif row[col.name] in (1, True, '1') %}
+                                                    <span class="status-dot status-ok" title="Accessible"></span>
+                                                    <span>Accessible</span>
+                                                {% else %}
+                                                    <span class="status-dot status-bad" title="Not accessible"></span>
+                                                    <span>Not accessible</span>
+                                                {% endif %}
+                                            {% elif col.data_type == "t-word-tag" %}
+                                                {% set raw_tags = row[col.name] %}
+                                                {% if raw_tags %}
+                                                    {% for tag in raw_tags|string|split(";") %}
+                                                        {% set tag_text = tag.strip() %}
+                                                        {% if tag_text %}
+                                                            <div class="tag-item">{{ tag_text }}</div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% else %}
+                                                {{ row[col.name] }}
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+
+
+
+
+
+
+                </tbody>
+            </table>
+        </section>
+
+
+
+     </main>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

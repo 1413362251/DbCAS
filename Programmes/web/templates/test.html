@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>带显示行数控制的表格示例</title>
+    <style>
+        /* 隐藏 (hidden) 样式 */
+        .hidden { display: none; }
+        /* 选定区域 (container) */
+        .container {
+            border: 1px solid #000;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        /* 按钮美化 (button beautification) */
+        button {
+            border-radius: 5px;  /* 圆角 (rounded corners) */
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        /* 头部 (header) 美化 */
+        header {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 2px solid #ccc;
+        }
+        /* 下拉菜单 (dropdown) 样式，可根据需要调整 */
+        select {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <!-- 页面头部 (header) -->
+    <header>
+        <label for="rowsSelect">选择显示行数 (Select Rows): </label>
+        <select id="rowsSelect" onchange="updateRowsDisplay()">
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="5">5</option>
+        </select>
+    </header>
+
+    <!-- 数据区域 (container) -->
+    <div class="container">
+        <table border="1" width="100%">
+            <!-- 表头 (table header) -->
+            <thead>
+                <tr>
+                    <th>列1 (Column 1)</th>
+                    <th>列2 (Column 2)</th>
+                    <th>操作 (Operation)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- 数据行1 -->
+                <tr class="data-row">
+                    <td>数据1 (Data 1)</td>
+                    <td>数据2 (Data 2)</td>
+                    <td>
+                        <button onclick="toggleSubTable(this)">展开 (Expand)</button>
+                    </td>
+                </tr>
+                <tr class="sub-row hidden">
+                    <td colspan="3">
+                        <!-- 子表格 (sub-table) -->
+                        <table border="1" width="100%">
+                            <tr>
+                                <th>子列1 (Sub Column 1)</th>
+                                <th>子列2 (Sub Column 2)</th>
+                                <th>子列3 (Sub Column 3)</th>
+                            </tr>
+                            <tr>
+                                <td>子数据1 (Sub Data 1)</td>
+                                <td>子数据2 (Sub Data 2)</td>
+                                <td>子数据3 (Sub Data 3)</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- 数据行2 -->
+                <tr class="data-row">
+                    <td>数据3 (Data 3)</td>
+                    <td>数据4 (Data 4)</td>
+                    <td>
+                        <button onclick="toggleSubTable(this)">展开 (Expand)</button>
+                    </td>
+                </tr>
+                <tr class="sub-row hidden">
+                    <td colspan="3">
+                        <table border="1" width="100%">
+                            <tr>
+                                <th>子列1 (Sub Column 1)</th>
+                                <th>子列2 (Sub Column 2)</th>
+                                <th>子列3 (Sub Column 3)</th>
+                            </tr>
+                            <tr>
+                                <td>子数据4 (Sub Data 4)</td>
+                                <td>子数据5 (Sub Data 5)</td>
+                                <td>子数据6 (Sub Data 6)</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- 数据行3 -->
+                <tr class="data-row">
+                    <td>数据5 (Data 5)</td>
+                    <td>数据6 (Data 6)</td>
+                    <td>
+                        <button onclick="toggleSubTable(this)">展开 (Expand)</button>
+                    </td>
+                </tr>
+                <tr class="sub-row hidden">
+                    <td colspan="3">
+                        <table border="1" width="100%">
+                            <tr>
+                                <th>子列1 (Sub Column 1)</th>
+                                <th>子列2 (Sub Column 2)</th>
+                                <th>子列3 (Sub Column 3)</th>
+                            </tr>
+                            <tr>
+                                <td>子数据7 (Sub Data 7)</td>
+                                <td>子数据8 (Sub Data 8)</td>
+                                <td>子数据9 (Sub Data 9)</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- 数据行4 -->
+                <tr class="data-row">
+                    <td>数据7 (Data 7)</td>
+                    <td>数据8 (Data 8)</td>
+                    <td>
+                        <button onclick="toggleSubTable(this)">展开 (Expand)</button>
+                    </td>
+                </tr>
+                <tr class="sub-row hidden">
+                    <td colspan="3">
+                        <table border="1" width="100%">
+                            <tr>
+                                <th>子列1 (Sub Column 1)</th>
+                                <th>子列2 (Sub Column 2)</th>
+                                <th>子列3 (Sub Column 3)</th>
+                            </tr>
+                            <tr>
+                                <td>子数据10 (Sub Data 10)</td>
+                                <td>子数据11 (Sub Data 11)</td>
+                                <td>子数据12 (Sub Data 12)</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- 数据行5 -->
+                <tr class="data-row">
+                    <td>数据9 (Data 9)</td>
+                    <td>数据10 (Data 10)</td>
+                    <td>
+                        <button onclick="toggleSubTable(this)">展开 (Expand)</button>
+                    </td>
+                </tr>
+                <tr class="sub-row hidden">
+                    <td colspan="3">
+                        <table border="1" width="100%">
+                            <tr>
+                                <th>子列1 (Sub Column 1)</th>
+                                <th>子列2 (Sub Column 2)</th>
+                                <th>子列3 (Sub Column 3)</th>
+                            </tr>
+                            <tr>
+                                <td>子数据13 (Sub Data 13)</td>
+                                <td>子数据14 (Sub Data 14)</td>
+                                <td>子数据15 (Sub Data 15)</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <!-- 更多数据行可根据需要添加 (More rows can be added as needed) -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // 点击按钮时切换子表格显示状态 (toggle sub-table display)
+        function toggleSubTable(button) {
+            var currentRow = button.parentNode.parentNode;  // 获取当前数据行 (get current data row)
+            var subRow = currentRow.nextElementSibling;       // 获取对应的子表格行 (get corresponding sub-row)
+            if (subRow.classList.contains("hidden")) {
+                subRow.classList.remove("hidden");  // 展开 (expand)
+                button.innerText = "收起 (Collapse)";
+            } else {
+                subRow.classList.add("hidden");      // 收起 (collapse)
+                button.innerText = "展开 (Expand)";
+            }
+        }
+
+        // 更新表格显示的行数 (update displayed rows)
+        function updateRowsDisplay() {
+            var select = document.getElementById("rowsSelect");
+            var rowsToShow = parseInt(select.value); // 获取选择的行数 (get selected number of rows)
+            var dataRows = document.querySelectorAll(".data-row");
+
+            // 遍历所有数据行，根据索引判断显示或隐藏 (iterate over data rows)
+            for (var i = 0; i < dataRows.length; i++) {
+                var dataRow = dataRows[i];
+                var subRow = dataRow.nextElementSibling;  // 对应的子表格行 (corresponding sub-row)
+                if (i < rowsToShow) {
+                    dataRow.style.display = "";
+                    // 若子表格之前处于展开状态，此处不强制隐藏，由用户操作控制
+                } else {
+                    dataRow.style.display = "none";
+                    if (subRow) {
+                        subRow.style.display = "none";
+                    }
+                }
+            }
+        }
+
+        // 页面加载后初始化显示 (initialize display on page load)
+        window.onload = function() {
+            updateRowsDisplay();
+        };
+    </script>
+</body>
+</html>
