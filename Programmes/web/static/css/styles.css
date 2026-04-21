@@ -17,7 +17,7 @@ html {
 /* 设置页面的基础样式 */
 body {
   margin: 0;
-  font-family: Cambria,Arial, sans-serif;
+  font-family: "Roboto", sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -41,9 +41,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    width: 20%;
+    align-items: flex-start;
+    width: 24%;
     height: 100%;
+    padding-left: 1.25rem;
 }
 
 
@@ -52,6 +53,21 @@ body {
   width: 100%; /* 设置图片宽度 */
   height: 70%; /* 自动调整高度以保持比例 */
   object-fit: contain; /* 保证图片适配容器，保持横纵比 */
+}
+
+.top-logo-main {
+  width: 80%;
+  max-width: 12rem;
+  height: auto;
+  object-fit: contain;
+}
+
+.top-logo-sub {
+  width: 60%;
+  max-width: 10rem;
+  height: auto;
+  margin-top: 0.35rem;
+  object-fit: contain;
 }
 
 /* 导航菜单样式 */
@@ -160,7 +176,7 @@ body {
     height: 90%;
     width: 20%;
     min-width: 90px;
-    font-family: Cambria, "Times New Roman", serif;
+    font-family: "Roboto", sans-serif;
     border-radius: 3vh;
     cursor: pointer;
     border: 0;
@@ -620,7 +636,8 @@ tbody tr:hover {
   }
 
   .logo {
-    width: 40%;
+    width: 52%;
+    padding-left: 0.5rem;
   }
 
   .navbar .menu {
