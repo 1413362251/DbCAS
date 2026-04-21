@@ -1,0 +1,13 @@
+Skip 85055 references with missing source/id in stage 2
+MED/29946150: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/21971425: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/16169468: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/20184888: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/20622885: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/36915530: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/18503770: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/22197230: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/35044296: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/36778129: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
+MED/37953789: 502 Server Error: Bad Gateway for url: https://www.ebi.ac.uk/europepmc/webservices/rest/article/MED/37953789?format=json&resultType=core
+MED/39905176: HTTPSConnectionPool(host='www.ebi.ac.uk', port=443): Read timed out. (read timeout=30)
