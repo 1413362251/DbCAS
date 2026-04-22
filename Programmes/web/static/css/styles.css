@@ -19,7 +19,7 @@
   /* Search strip: same corner radius on outer card, gradient frame, and button */
   --search-ui-radius: 2rem;
   /* Gradient ring thickness around the typing field (nested radius = outer − pad) */
-  --search-frame-pad: 1rem;
+  --search-frame-pad: 0.55rem;
   --search-input-radius: max(0.28rem, calc(var(--search-ui-radius) - var(--search-frame-pad)));
 }
 
@@ -208,7 +208,7 @@ body.page-search .main-content {
     display: flex;
     align-items: center;
     width: 40%;
-    height: 46%;
+    height: 56%;
 }
 #search-example{
     width: 60%;
@@ -361,6 +361,10 @@ body.page-contribute .statistic--about {
 
 .statistic-welcome--about > p + p {
     margin-top: 1.1rem;
+}
+
+.statistic-welcome--about {
+    width: min(960px, 90vw);
 }
 
 a.contribute-email {
@@ -569,7 +573,7 @@ a.contribute-email:hover {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    width: var(--home-hero-width);
+    width: min(1120px, 90vw);
     max-width: none;
     margin-inline: auto;
     padding: clamp(1rem, 2.2vw, 1.65rem) clamp(1rem, 2.8vw, 1.75rem);
@@ -613,7 +617,7 @@ a.contribute-email:hover {
 .statistic-welcome-card-container {
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.5rem;
     align-items: stretch;
 }
@@ -687,6 +691,12 @@ a.contribute-email:hover {
     font-size: clamp(0.9rem, 0.35vw + 0.82rem, 1rem);
     line-height: 1.55;
     color: #444;
+}
+
+@media (max-width: 1280px) {
+  .statistic-welcome-card-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .footer {
