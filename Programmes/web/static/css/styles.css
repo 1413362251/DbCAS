@@ -1,6 +1,8 @@
 /* Design tokens (responsive scaling) */
 :root {
-  --font-size-base: 16px;
+  /* Global UI scaling: approximate browser 80% zoom effect */
+  --ui-scale: 0.8;
+  --font-size-base: calc(16px * var(--ui-scale));
   --font-size-search-title-min: 1.2rem;
   --font-size-search-title-max: 1.8rem;
   --font-size-nav-link-min: 1.1rem;
@@ -11,7 +13,7 @@
   --app-height: 100vh;
   /* Search page: max visible height of the scrollable table area (was written as 150hv → 150vh) */
   --search-table-shell-max-h: 150vh;
-  --nav-h: 10vh;
+  --nav-h: calc(10vh * var(--ui-scale));
   /* Footer spacing (tune these): */
   --footer-padding-x: clamp(0.5rem, 2vw, 1.25rem);
   --footer-inline-gap: clamp(0.75rem, 2.5vw, 1.75rem); /* between copyright text and logo group */
@@ -185,7 +187,7 @@ body.page-search .main-content {
     justify-content: center;
     align-items: center;
     padding: 0 10px;
-    height: 14vh; /* overall search strip */
+    height: calc(14vh * var(--ui-scale)); /* overall search strip */
     width: 60%;
     border-radius: var(--search-ui-radius);
     box-shadow: 10px 10px 10px rgba(168, 168, 170, 0.5);
@@ -793,7 +795,7 @@ body.page-search main.table {
     border-top-right-radius: 30px ;
     border-top-left-radius: 30px ;
     border-bottom: 3px solid rgba(0, 0, 0, 0.69);
-    font-size: 20px;
+    font-size: 1.25rem;
 
 
 }
