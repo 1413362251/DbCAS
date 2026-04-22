@@ -1,7 +1,7 @@
 /* Design tokens (responsive scaling) */
 :root {
   /* Global UI scaling: approximate browser 80% zoom effect */
-  --ui-scale: 0.8;
+  --ui-scale: 0.9;
   --font-size-base: calc(16px * var(--ui-scale));
   --font-size-search-title-min: 1.2rem;
   --font-size-search-title-max: 1.8rem;
