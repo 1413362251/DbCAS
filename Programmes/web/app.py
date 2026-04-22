@@ -15,6 +15,23 @@ def split_text(value, sep=";"):
 
 app.jinja_env.filters["split"] = split_text
 
+
+def normalize_numeric_value(value):
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return value
+
+
+def format_column_header(value):
+    """Turn DB column / display strings into readable table headers."""
+    if value is None:
+        return ""
+    text = str(value).replace("_", " ").strip()
+    if not text:
+        return ""
+    return " ".join(part.capitalize() for part in text.split())
+
+
 def load_display_config():
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
@@ -41,7 +58,7 @@ def load_display_config():
         columns = [
             {
                 "name": row["column_name"],
-                "label": row["display_name"],
+                "label": format_column_header(row["display_name"]),
                 "group": row["display_group"],
                 "is_access": row["is_access"],
                 "data_type": row["data_type"] if has_data_type else None,
@@ -54,7 +71,7 @@ def load_display_config():
         columns = [
             {
                 "name": row[1],
-                "label": row[1],
+                "label": format_column_header(row[1]),
                 "group": "main",
             }
             for row in rows
@@ -79,6 +96,17 @@ def load_display_config():
 def home():
     return render_template("home.html")
 
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/contribute")
+def contribute():
+    return render_template("contribute.html")
+
+
 @app.route('/search')
 def search():
     # Connect to database and fetch data.
@@ -97,6 +125,20 @@ def search():
 
     data = cursor.fetchall()
     conn.close()
+
+    numeric_columns = {
+        col["name"]
+        for col in main_cols + expand_cols
+        if (col.get("data_type") or "").lower() in ("t-numeric", "t-numeric-cite")
+    }
+    normalized_data = []
+    for row in data:
+        row_dict = dict(row)
+        for col_name in numeric_columns:
+            if col_name in row_dict:
+                row_dict[col_name] = normalize_numeric_value(row_dict[col_name])
+        normalized_data.append(row_dict)
+    data = normalized_data
 
     tag_columns = [
         col["name"]

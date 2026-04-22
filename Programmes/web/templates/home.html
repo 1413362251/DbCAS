@@ -1,46 +1,59 @@
 <!-- templates/home.html -->
 {% extends "base.html" %}
 
+{% block html_class %}page-home{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
 {% block title %}Home{% endblock %}
+
+{% block searchbar %}{% endblock %}
 
 {% block content %}
 
     <!-- Welcome + Statistic box -->
     <div class="statistic">
-        <div class="flip-container" id="flip-container">
+        <div class="flip-container">
             <img class="home-static-logo" src="{{ url_for('static', filename='fig/DbCAS.png') }}" alt="DbCAS Logo">
         </div>
+        <a class="home-search-button" href="{{ url_for('search') }}">
+            <svg class="home-search-button__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="m20 20-3.5-3.5"/>
+            </svg>
+            <span class="home-search-button__label">Start search</span>
+        </a>
         <div class="statistic-welcome">
             <h1>Welcome to DbCAS</h1>
-            <p>This blank is for welcome and statistic function </p>
-            <div class = "statistic-welcome-card-container" >
-                <div class="statistic-welcome-card">
-                    <div class="first-content">
-                        <p>Databases</p>
+            <p>A unified gateway to the rapidly expanding landscape of alternative splicing resources, DbCAS brings diverse databases together in one accessible, searchable platform. Built on a systematic survey of the databases used in more than 4,000 mainstream alternative splicing studies over the past 10 years, DbCAS records and integrates these resources into a curated collection to help you find the most suitable one. Whether you are exploring isoform biology, mining long-read datasets, or surveying transcriptomic diversity, DbCAS is designed to help find the right resource.</p>
+            <div class="statistic-welcome-cards-stack">
+                <div class="statistic-welcome-card-container">
+                    <div class="statistic-welcome-card">
+                        <p class="statistic-welcome-card__label">Databases</p>
+                        <p class="statistic-welcome-card__value">48</p>
                     </div>
-                    <div class="second-content">
-                        <span>48</span>
+                    <div class="statistic-welcome-card">
+                        <p class="statistic-welcome-card__label">Species</p>
+                        <p class="statistic-welcome-card__value">51</p>
                     </div>
-                </div>
-
-                <div class="statistic-welcome-card">
-                    <div class="first-content">
-                        <span>Species </span>
-                    </div>
-                    <div class="second-content">
-                        <span>51</span>
+                    <div class="statistic-welcome-card">
+                        <p class="statistic-welcome-card__label">Publications</p>
+                        <p class="statistic-welcome-card__value">86</p>
                     </div>
                 </div>
-
-                <div class="statistic-welcome-card">
-                    <div class="first-content">
-                        <span>Publications</span>
+                <div class="statistic-welcome-card-container">
+                    <div class="statistic-welcome-card">
+                        <p class="statistic-welcome-card__label">Placeholder metric A</p>
+                        <p class="statistic-welcome-card__value">—</p>
                     </div>
-                    <div class="second-content">
-                        <span>86</span>
+                    <div class="statistic-welcome-card">
+                        <p class="statistic-welcome-card__label">Placeholder metric B</p>
+                        <p class="statistic-welcome-card__value">—</p>
+                    </div>
+                    <div class="statistic-welcome-card">
+                        <p class="statistic-welcome-card__label">Placeholder metric C</p>
+                        <p class="statistic-welcome-card__value">—</p>
                     </div>
                 </div>
-
             </div>
             <div class="statistic-welcome-claim">
                 <div class="cite">
