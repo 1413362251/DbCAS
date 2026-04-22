@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="{% block html_class %}{% endblock %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,54 +7,55 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <!--
-    <link rel="stylesheet" href="/Web/static/css/styles.css">
-    -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <!-- nav -->
     <div class="navbar">
         <div class="logo">
             <img src="{{ url_for('static', filename='fig/DbCAS_plain.png') }}" alt="DbCAS logo" class="top-logo-main">
-            <img src="{{ url_for('static', filename='fig/logo_splicelab.png') }}" alt="SpliceLab logo" class="top-logo-sub">
         </div>
         <div class="menu">
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('search') }}">Search</a>
-            <a href="#services">About</a>
-            <a href="#contact">Contribute</a>
+            <a href="{{ url_for('about') }}">About</a>
+            <a href="{{ url_for('contribute') }}">Contribute</a>
             <a href="https://www.splicelab.co.uk/" target="_blank">SpliceLab</a>
         </div>
     </div>
         <!-- Welcome + Statistic box -->
     <div class="main-content">
+        {% block searchbar %}
         <div class="searchbar">
-            <h1>Find your database:</h1>
+            <h1>Search for Alternative Splicing Databases</h1>
             <form method="GET" action="/search" id="search-block">
                 <div class="InputContainer">
                     <input placeholder="Search..(Defualt:show all databases)" id="searchInput" class="input" name="q" type="text">
                 </div>
-                <button id="searchButton" type="submit">Search</button>
+                <button id="searchButton" type="submit">
+                    <span class="search-button__inner">
+                        <svg class="search-button__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="m20 20-3.5-3.5"/>
+                        </svg>
+                        <span class="search-button__label">Search</span>
+                    </span>
+                </button>
             </form>
-            <p id="search-example">eg.ribosome</p>
+            <p id="search-example">E.g., mouse, brain, long-read, bulk, single-cell</p>
         </div>
+        {% endblock %}
         {% block content %}{% endblock %}
     </div>
 
     <div class="footer">
-        <img src="{{ url_for('static', filename='fig/logo_splicelab.png') }}" alt="Logo" class="logo-footer" id="footer-logo">
-        <img src="{{ url_for('static', filename='fig/logo_southampton.png') }}" alt="Logo" class="logo-footer">
-        <p class="address">
-            School of Biological Sciences<br>
-            Building 85, Highfield Campus<br>
-            University of Southampton<br>
-            Southampton, SO17 1BJ<br>
-            United Kingdom
-        </p>
         <p class="rights">
-            ©️ 2025 West Fang. All rights reserved.
+            ©️2026 Designed by Splice Lab UK. All rights reserved.
         </p>
+        <div class="footer-logo-row">
+            <img src="{{ url_for('static', filename='fig/logo_splicelab.png') }}" alt="Logo" class="logo-footer" id="footer-logo">
+            <img src="{{ url_for('static', filename='fig/logo_southampton.png') }}" alt="Logo" class="logo-footer">
+        </div>
     </div>
 </body>
 </html>

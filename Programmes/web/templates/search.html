@@ -1,6 +1,9 @@
 <!-- templates/search.html -->
 {% extends "base.html" %}
 
+{% block html_class %}page-search{% endblock %}
+{% block body_class %}page-search{% endblock %}
+
 {% block title %}Search{% endblock %}
 
 {% block content %}
@@ -84,7 +87,12 @@
                                 {% endif %}
                             >
                                 {% if col.render == "url" %}
-                                    <a href="{{ row[col.name] }}" target="_blank">{{ row[col.name] }}</a>
+                                    {% set url_value = row[col.name] %}
+                                    {% if url_value %}
+                                        <a href="{{ url_value }}" target="_blank">{{ url_value }}</a>
+                                    {% else %}
+                                        <span class="empty-value">&mdash;</span>
+                                    {% endif %}
                                 {% elif col.render == "doi" %}
                                     {% set doi_value = row[col.name] %}
                                     {% if doi_value %}
@@ -93,6 +101,8 @@
                                         {% else %}
                                             <a href="https://doi.org/{{ doi_value }}" target="_blank">{{ doi_value }}</a>
                                         {% endif %}
+                                    {% else %}
+                                        <span class="empty-value">&mdash;</span>
                                     {% endif %}
                                 {% elif col.render == "access" %}
                                     {% if row[col.name] is none %}
@@ -114,14 +124,20 @@
                                                 <div class="tag-item">{{ tag_text }}</div>
                                             {% endif %}
                                         {% endfor %}
+                                    {% else %}
+                                        <span class="empty-value">&mdash;</span>
                                     {% endif %}
                                 {% else %}
-                                    {{ row[col.name] }}
+                                    {% if row[col.name] is none or row[col.name] == '' %}
+                                        <span class="empty-value">&mdash;</span>
+                                    {% else %}
+                                        {{ row[col.name] }}
+                                    {% endif %}
                                 {% endif %}
                             </td>
                         {% endfor %}
                         <td>
-                            <button class="expand-btn" onclick="toggleSubTable(this)">Expand</button>
+                            <button class="expand-btn expand-btn--expand" onclick="toggleSubTable(this)" aria-expanded="false">Expand</button>
                         </td>
                     </tr>
                     <tr class="sub-row hidden">
@@ -179,7 +195,12 @@
                                             {% endif %}
                                         >
                                             {% if col.render == "url" %}
-                                                <a href="{{ row[col.name] }}" target="_blank">{{ row[col.name] }}</a>
+                                                {% set url_value = row[col.name] %}
+                                                {% if url_value %}
+                                                    <a href="{{ url_value }}" target="_blank">{{ url_value }}</a>
+                                                {% else %}
+                                                    <span class="empty-value">&mdash;</span>
+                                                {% endif %}
                                             {% elif col.render == "doi" %}
                                                 {% set doi_value = row[col.name] %}
                                                 {% if doi_value %}
@@ -188,6 +209,8 @@
                                                     {% else %}
                                                         <a href="https://doi.org/{{ doi_value }}" target="_blank">{{ doi_value }}</a>
                                                     {% endif %}
+                                                {% else %}
+                                                    <span class="empty-value">&mdash;</span>
                                                 {% endif %}
                                             {% elif col.render == "access" %}
                                                 {% if row[col.name] is none %}
@@ -209,9 +232,15 @@
                                                             <div class="tag-item">{{ tag_text }}</div>
                                                         {% endif %}
                                                     {% endfor %}
+                                                {% else %}
+                                                    <span class="empty-value">&mdash;</span>
                                                 {% endif %}
                                             {% else %}
-                                                {{ row[col.name] }}
+                                                {% if row[col.name] is none or row[col.name] == '' %}
+                                                    <span class="empty-value">&mdash;</span>
+                                                {% else %}
+                                                    {{ row[col.name] }}
+                                                {% endif %}
                                             {% endif %}
                                         </td>
                                     {% endfor %}

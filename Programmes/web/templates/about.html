@@ -1,0 +1,21 @@
+<!-- templates/about.html -->
+{% extends "base.html" %}
+
+{% block html_class %}page-about{% endblock %}
+{% block body_class %}page-about{% endblock %}
+
+{% block title %}About{% endblock %}
+
+{% block searchbar %}{% endblock %}
+
+{% block content %}
+
+    <div class="statistic statistic--about">
+        <div class="statistic-welcome statistic-welcome--about">
+            <h1>About DbCAS</h1>
+            <p>DbCAS was created to address a growing challenge in the RNA splicing field: the rapid expansion and fragmentation of alternative-splicing databases across platforms, organisms, technologies, and analytical frameworks. As long-read sequencing, single-cell profiling, and context-specific transcriptomics accelerate, researchers increasingly struggle to locate, compare, and contextualize the resources most relevant to their work. DbCAS brings these datasets together into a single, coherent commons, making navigation and discovery easier and the landscape more transparent for the RNA splicing community.</p>
+            <p>The database was built on the basis of a systematic study. Starting from the idea that alternative splicing research frequently relies on AS-related datasets and resources, this work systematically surveyed around 4,000 highly AS-related publications from the past 10 years, generating approximately 10,000 references. From these, a curated list of databases was compiled. DbCAS will continue to track the accessibility of these resources and update the database list on a regular basis.</p>
+            <p>This initiative is led by Dr Kif Liakath-Ali and the SpliceLab at the University of Southampton, with the goal of supporting open, accessible, and integrative RNA splicing research worldwide.</p>
+        </div>
+    </div>
+{% endblock %}

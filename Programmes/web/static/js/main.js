@@ -1,5 +1,3 @@
-console.log("JavaScript is working!");
-
 // 切换子表格显示状态 (toggle sub-table display)
 function toggleSubTable(button) {
     var currentRow = button.parentNode.parentNode;  // 获取当前数据行 (get current data row)
@@ -7,9 +5,15 @@ function toggleSubTable(button) {
     if (subRow.classList.contains("hidden")) {
         subRow.classList.remove("hidden");  // 展开 (expand)
         button.innerText = "Collapse";
+        button.classList.remove("expand-btn--expand");
+        button.classList.add("expand-btn--collapse");
+        button.setAttribute("aria-expanded", "true");
     } else {
         subRow.classList.add("hidden");      // 收起 (collapse)
         button.innerText = "Expand";
+        button.classList.remove("expand-btn--collapse");
+        button.classList.add("expand-btn--expand");
+        button.setAttribute("aria-expanded", "false");
     }
 }
 
@@ -238,42 +242,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     applyFilters();
 
-    // 监听所有按钮的点击事件 (listen for all toggle buttons)
-    document.querySelectorAll(".toggle-button").forEach(button => {
-        button.addEventListener("click", function() {
-            toggleSubTable(this);
+    var searchbar = document.querySelector(".searchbar");
+    var mainContent = document.querySelector(".main-content");
+    if (searchbar && mainContent) {
+        searchbar.addEventListener("mouseover", function() {
+            mainContent.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
         });
-    });
+        searchbar.addEventListener("mouseout", function() {
+            mainContent.style.backgroundColor = "";
+        });
+    }
 });
-
-// search 时的变色
-document.addEventListener("DOMContentLoaded", function(){
-    var rows = document.querySelectorAll(".data-row");
-    rows.forEach(function(row, index){
-        row.style.backgroundColor = (index % 2 === 0) ? "white" : "#f0f0f0"; // 更浅的灰色
-    });
-});
-document.querySelector('.searchbar').addEventListener('mouseover', function() {
-    document.querySelector('.main-content').style.backgroundColor = 'rgb(0,0,0,0.8)';
-});
-
-document.querySelector('.searchbar').addEventListener('mouseout', function() {
-    document.querySelector('.main-content').style.backgroundColor = 'rgb(112, 112, 105)';
-});
-
-// Biglogo in welcome page flip
-document.addEventListener("DOMContentLoaded", function(){
-      const card = document.querySelector('.flip-card');
-      if (!card) return;
-
-      // 设置一点延时，确保初始状态先渲染完
-      setTimeout(() => {
-          card.classList.add('animate');
-      }, 100);
-
-      // 监听 transition 动画结束事件
-      card.addEventListener('transitionend', () => {
-          // 动画结束后移除 .animate 类
-          card.classList.remove('animate');
-      });
-  });
