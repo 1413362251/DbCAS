@@ -1,15 +1,82 @@
-// 切换子表格显示状态 (toggle sub-table display)
+/** Phone only (match in CSS @media max-width: 768px): fold tag list after this many visible tags. Tune here — CSS cannot count children. */
+var SEARCH_TAG_COLLAPSE_MAX_VISIBLE = 4;
+var SEARCH_TAG_MOBILE_MQ = "(max-width: 768px)";
+
+function searchTagCollapseIsMobile() {
+    return window.matchMedia(SEARCH_TAG_MOBILE_MQ).matches;
+}
+
+function teardownSearchTagCell(cell) {
+    cell.classList.remove("tag-cell--tags-collapsed", "tag-cell--tags-expanded");
+    cell.querySelectorAll(".tag-item").forEach(function(el) {
+        el.classList.remove("tag-item--folded");
+    });
+    var oldBtn = cell.querySelector(".tag-cell__more");
+    if (oldBtn) {
+        oldBtn.remove();
+    }
+}
+
+function syncSearchTagFolded(cell) {
+    var items = cell.querySelectorAll(".tag-item");
+    var expanded = cell.classList.contains("tag-cell--tags-expanded");
+    items.forEach(function(el, idx) {
+        el.classList.toggle("tag-item--folded", !expanded && idx >= SEARCH_TAG_COLLAPSE_MAX_VISIBLE);
+    });
+}
+
+function setupSearchTagCell(cell) {
+    var items = cell.querySelectorAll(".tag-item");
+    var total = items.length;
+    if (total <= SEARCH_TAG_COLLAPSE_MAX_VISIBLE) {
+        teardownSearchTagCell(cell);
+        return;
+    }
+    if (!searchTagCollapseIsMobile()) {
+        teardownSearchTagCell(cell);
+        return;
+    }
+    cell.classList.add("tag-cell--tags-collapsed");
+    syncSearchTagFolded(cell);
+    var btn = cell.querySelector(".tag-cell__more");
+    if (!btn) {
+        btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "tag-cell__more";
+        btn.addEventListener("click", function(ev) {
+            ev.stopPropagation();
+            var c = ev.target.closest("td.tag-cell");
+            if (!c) return;
+            c.classList.toggle("tag-cell--tags-expanded");
+            syncSearchTagFolded(c);
+            var n = c.querySelectorAll(".tag-item").length;
+            var expanded = c.classList.contains("tag-cell--tags-expanded");
+            ev.target.textContent = expanded ? "Show less" : ("+" + String(n - SEARCH_TAG_COLLAPSE_MAX_VISIBLE) + " more");
+            ev.target.setAttribute("aria-expanded", expanded ? "true" : "false");
+        });
+        cell.appendChild(btn);
+    }
+    var expandedNow = cell.classList.contains("tag-cell--tags-expanded");
+    btn.textContent = expandedNow ? "Show less" : ("+" + String(total - SEARCH_TAG_COLLAPSE_MAX_VISIBLE) + " more");
+    btn.setAttribute("aria-expanded", expandedNow ? "true" : "false");
+}
+
+function initSearchTagCollapse() {
+    if (!document.body.classList.contains("page-search")) return;
+    document.querySelectorAll("td.tag-cell").forEach(setupSearchTagCell);
+}
+
 function toggleSubTable(button) {
-    var currentRow = button.parentNode.parentNode;  // 获取当前数据行 (get current data row)
-    var subRow = currentRow.nextElementSibling;       // 获取对应的子表格行 (get corresponding sub-row)
+    var currentRow = button.parentNode.parentNode;
+    var subRow = currentRow.nextElementSibling;
     if (subRow.classList.contains("hidden")) {
-        subRow.classList.remove("hidden");  // 展开 (expand)
+        subRow.classList.remove("hidden");
         button.innerText = "Collapse";
         button.classList.remove("expand-btn--expand");
         button.classList.add("expand-btn--collapse");
         button.setAttribute("aria-expanded", "true");
     } else {
-        subRow.classList.add("hidden");      // 收起 (collapse)
+        subRow.classList.add("hidden");
         button.innerText = "Expand";
         button.classList.remove("expand-btn--collapse");
         button.classList.add("expand-btn--expand");
@@ -17,12 +84,10 @@ function toggleSubTable(button) {
     }
 }
 
-// 更新表格显示的行数 (update displayed rows)
 function updateRowsDisplay() {
     var select = document.getElementById("rowsSelect");
     if (!select) return;
 
-    // 取得用户选择的值 (get the user-selected value)
     var rowsToShow = select.value;
     var dataRows = document.querySelectorAll(".data-row");
     var visibleRows = [];
@@ -38,7 +103,6 @@ function updateRowsDisplay() {
         }
     }
 
-    // 如果选择的是 "all"，就显示所有行，否则只显示指定数量 (if the user selected "all", show all rows)
     if (rowsToShow === "all") {
         for (var i = 0; i < visibleRows.length; i++) {
             var dataRow = visibleRows[i];
@@ -50,8 +114,7 @@ function updateRowsDisplay() {
             }
         }
     } else {
-        // 将字符串转成数字 (convert string to number)
-        var showCount = parseInt(rowsToShow);
+        var showCount = parseInt(rowsToShow, 10);
 
         for (var i = 0; i < visibleRows.length; i++) {
             var dataRow = visibleRows[i];
@@ -188,11 +251,9 @@ function sortByNumericColumn(col, direction) {
 
 
 
-// 页面加载后初始化显示 (initialize display on page load)
 document.addEventListener("DOMContentLoaded", function() {
     updateRowsDisplay();
 
-    // 监听行数选择变化 (listen for row selection changes)
     var select = document.getElementById("rowsSelect");
     if (select) {
         select.addEventListener("change", updateRowsDisplay);
@@ -241,6 +302,13 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     applyFilters();
+
+    initSearchTagCollapse();
+    var tagCollapseResizeTimer;
+    window.addEventListener("resize", function() {
+        clearTimeout(tagCollapseResizeTimer);
+        tagCollapseResizeTimer = setTimeout(initSearchTagCollapse, 150);
+    });
 
     var searchbar = document.querySelector(".searchbar");
     var mainContent = document.querySelector(".main-content");

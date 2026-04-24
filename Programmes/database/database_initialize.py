@@ -151,9 +151,9 @@ def check_url_accessible(url):
                     )
                     if response.status_code < 400:
                         return True
-                except Exception:
+                except requests.RequestException:
                     continue
-            except Exception:
+            except requests.RequestException:
                 continue
     return False
 
@@ -235,7 +235,7 @@ if citation_column and doi_column:
                 success_count += 1
             else:
                 failed_count += 1
-        except Exception:
+        except (requests.RequestException, ValueError, KeyError):
             df_data.at[index, citation_column] = np.nan
             df_raw.at[index, citation_meta["original_name"]] = np.nan
             failed_count += 1

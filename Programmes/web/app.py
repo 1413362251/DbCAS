@@ -23,7 +23,6 @@ def normalize_numeric_value(value):
 
 
 def format_column_header(value):
-    """Turn DB column / display strings into readable table headers."""
     if value is None:
         return ""
     text = str(value).replace("_", " ").strip()
@@ -109,7 +108,6 @@ def contribute():
 
 @app.route('/search')
 def search():
-    # Connect to database and fetch data.
     keyword = request.args.get('q', '').strip()
     main_cols, expand_cols, all_cols = load_display_config()
     conn = sqlite3.connect(str(DB_PATH))
