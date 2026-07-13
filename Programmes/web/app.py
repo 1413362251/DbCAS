@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 from pathlib import Path
 import sqlite3
 
@@ -88,8 +88,8 @@ def load_display_config():
             col["render"] = "text"
     main_cols = [col for col in columns if col["group"] == "main"]
     expand_cols = [col for col in columns if col["group"] == "expand"]
-    all_cols = [col["name"] for col in columns]
-    return main_cols, expand_cols, all_cols
+    visible_cols = [col["name"] for col in main_cols + expand_cols]
+    return main_cols, expand_cols, visible_cols
 
 @app.route("/")
 def home():
@@ -103,23 +103,23 @@ def about():
 
 @app.route("/contribute")
 def contribute():
-    return render_template("contribute.html")
+    return redirect(url_for("about", _anchor="feedback"))
 
 
 @app.route('/search')
 def search():
     keyword = request.args.get('q', '').strip()
-    main_cols, expand_cols, all_cols = load_display_config()
+    main_cols, expand_cols, visible_cols = load_display_config()
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     if keyword:
-        where_clause = " OR ".join([f'"{col}" LIKE ?' for col in all_cols])
-        sql = f"SELECT {', '.join([f'\"{col}\"' for col in all_cols])} FROM database_info WHERE {where_clause}"
-        params = tuple(['%' + keyword + '%'] * len(all_cols))
+        where_clause = " OR ".join([f'"{col}" LIKE ?' for col in visible_cols])
+        sql = f"SELECT {', '.join([f'\"{col}\"' for col in visible_cols])} FROM database_info WHERE {where_clause}"
+        params = tuple(['%' + keyword + '%'] * len(visible_cols))
         cursor.execute(sql, params)
     else:
-        cursor.execute(f"SELECT {', '.join([f'\"{col}\"' for col in all_cols])} FROM database_info")
+        cursor.execute(f"SELECT {', '.join([f'\"{col}\"' for col in visible_cols])} FROM database_info")
 
     data = cursor.fetchall()
     conn.close()
@@ -153,10 +153,7 @@ def search():
                 tag_text = tag.strip()
                 if tag_text:
                     tag_options[col].add(tag_text)
-    tag_options = {
-        col: sorted(tags, key=str.lower)[:50]
-        for col, tags in tag_options.items()
-    }
+    tag_options = {col: sorted(tags, key=str.lower) for col, tags in tag_options.items()}
 
     return render_template(
         'search.html',

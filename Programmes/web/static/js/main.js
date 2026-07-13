@@ -1,6 +1,45 @@
 /** Phone only (match in CSS @media max-width: 768px): fold tag list after this many visible tags. Tune here — CSS cannot count children. */
 var SEARCH_TAG_COLLAPSE_MAX_VISIBLE = 4;
 var SEARCH_TAG_MOBILE_MQ = "(max-width: 768px)";
+var SEARCH_TAG_FILTER_PREVIEW_LIMIT = 50;
+var searchTagFilterOptionsCache = null;
+
+function getSearchTagFilterOptions() {
+    if (searchTagFilterOptionsCache !== null) {
+        return searchTagFilterOptionsCache;
+    }
+    var dataNode = document.getElementById("tagFilterOptionsData");
+    if (!dataNode) {
+        searchTagFilterOptionsCache = {};
+        return searchTagFilterOptionsCache;
+    }
+    try {
+        searchTagFilterOptionsCache = JSON.parse(dataNode.textContent || "{}");
+    } catch (error) {
+        searchTagFilterOptionsCache = {};
+    }
+    return searchTagFilterOptionsCache;
+}
+
+function expandSearchTagFilter(select) {
+    var col = select.getAttribute("data-col");
+    var allOptions = getSearchTagFilterOptions()[col] || [];
+    var existingValues = new Set(Array.from(select.options).map(option => option.value));
+    allOptions.slice(SEARCH_TAG_FILTER_PREVIEW_LIMIT).forEach(function(tag) {
+        if (existingValues.has(tag)) return;
+        var option = document.createElement("option");
+        option.value = tag;
+        option.textContent = tag;
+        select.appendChild(option);
+        existingValues.add(tag);
+    });
+    var expandOption = select.querySelector('option[data-expand-tags="true"]');
+    if (expandOption) {
+        expandOption.remove();
+    }
+    select.value = "";
+    select.setAttribute("data-expanded", "true");
+}
 
 function searchTagCollapseIsMobile() {
     return window.matchMedia(SEARCH_TAG_MOBILE_MQ).matches;
@@ -137,7 +176,7 @@ function applyFilters() {
     document.querySelectorAll(".tag-filter").forEach(select => {
         var col = select.getAttribute("data-col");
         var value = select.value;
-        if (col && value) {
+        if (col && value && value !== "__expand__") {
             tagFilters[col] = value.toLowerCase();
         }
     });
@@ -263,6 +302,10 @@ document.addEventListener("DOMContentLoaded", function() {
         select.addEventListener("change", function() {
             var col = this.getAttribute("data-col");
             var value = this.value;
+            if (value === "__expand__") {
+                expandSearchTagFilter(this);
+                return;
+            }
             document.querySelectorAll('.tag-filter[data-col="' + col + '"]').forEach(other => {
                 if (other !== this) {
                     other.value = value;

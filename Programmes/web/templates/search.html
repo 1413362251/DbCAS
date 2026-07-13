@@ -35,11 +35,15 @@
                             <th data-col="{{ col.name }}" data-type="{{ col.data_type or '' }}">
                                 {{ col.label }}
                                 {% if col.data_type == "t-word-tag" %}
+                                    {% set options = tag_options.get(col.name, []) %}
                                     <select class="tag-filter" data-col="{{ col.name }}">
                                         <option value="">All</option>
-                                        {% for tag in tag_options.get(col.name, []) %}
+                                        {% for tag in options[:50] %}
                                             <option value="{{ tag }}">{{ tag }}</option>
                                         {% endfor %}
+                                        {% if options|length > 50 %}
+                                            <option value="__expand__" data-expand-tags="true">Expand ({{ options|length - 50 }} more)</option>
+                                        {% endif %}
                                     </select>
                                 {% elif col.data_type in ("t-bool", "t-bool-access") %}
                                     <select class="bool-filter" data-col="{{ col.name }}">
@@ -95,11 +99,16 @@
                                 {% elif col.render == "doi" %}
                                     {% set doi_value = row[col.name] %}
                                     {% if doi_value %}
-                                        {% if doi_value.startswith("http://") or doi_value.startswith("https://") %}
-                                            <a href="{{ doi_value }}" target="_blank">{{ doi_value }}</a>
-                                        {% else %}
-                                            <a href="https://doi.org/{{ doi_value }}" target="_blank">{{ doi_value }}</a>
-                                        {% endif %}
+                                        {% for doi_part in doi_value|string|split(";") %}
+                                            {% set doi_text = doi_part.strip() %}
+                                            {% if doi_text %}
+                                                {% if doi_text.startswith("http://") or doi_text.startswith("https://") %}
+                                                    <div class="doi-item"><a href="{{ doi_text }}" target="_blank">{{ doi_text }}</a></div>
+                                                {% else %}
+                                                    <div class="doi-item"><a href="https://doi.org/{{ doi_text }}" target="_blank">{{ doi_text }}</a></div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
                                     {% else %}
                                         <span class="empty-value">&mdash;</span>
                                     {% endif %}
@@ -147,11 +156,15 @@
                                         <th data-col="{{ col.name }}" data-type="{{ col.data_type or '' }}">
                                             {{ col.label }}
                                             {% if col.data_type == "t-word-tag" %}
+                                                {% set options = tag_options.get(col.name, []) %}
                                                 <select class="tag-filter" data-col="{{ col.name }}">
                                                     <option value="">All</option>
-                                                    {% for tag in tag_options.get(col.name, []) %}
+                                                    {% for tag in options[:50] %}
                                                         <option value="{{ tag }}">{{ tag }}</option>
                                                     {% endfor %}
+                                                    {% if options|length > 50 %}
+                                                        <option value="__expand__" data-expand-tags="true">Expand ({{ options|length - 50 }} more)</option>
+                                                    {% endif %}
                                                 </select>
                                             {% elif col.data_type in ("t-bool", "t-bool-access") %}
                                                 <select class="bool-filter" data-col="{{ col.name }}">
@@ -202,11 +215,16 @@
                                             {% elif col.render == "doi" %}
                                                 {% set doi_value = row[col.name] %}
                                                 {% if doi_value %}
-                                                    {% if doi_value.startswith("http://") or doi_value.startswith("https://") %}
-                                                        <a href="{{ doi_value }}" target="_blank">{{ doi_value }}</a>
-                                                    {% else %}
-                                                        <a href="https://doi.org/{{ doi_value }}" target="_blank">{{ doi_value }}</a>
-                                                    {% endif %}
+                                                    {% for doi_part in doi_value|string|split(";") %}
+                                                        {% set doi_text = doi_part.strip() %}
+                                                        {% if doi_text %}
+                                                            {% if doi_text.startswith("http://") or doi_text.startswith("https://") %}
+                                                                <div class="doi-item"><a href="{{ doi_text }}" target="_blank">{{ doi_text }}</a></div>
+                                                            {% else %}
+                                                                <div class="doi-item"><a href="https://doi.org/{{ doi_text }}" target="_blank">{{ doi_text }}</a></div>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
                                                 {% else %}
                                                     <span class="empty-value">&mdash;</span>
                                                 {% endif %}
@@ -251,5 +269,6 @@
             </table>
         </section>
     </main>
+    <script id="tagFilterOptionsData" type="application/json">{{ tag_options | tojson }}</script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

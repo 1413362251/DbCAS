@@ -9,7 +9,7 @@
   --font-size-nav-link-max: 1.5rem;
   --font-size-card-title-min: 1rem;
   --font-size-card-title-max: 1.4rem;
-  /* Homepage only: locked shell height = 1 viewport */
+  /* Home and Help: locked shell height = 1 viewport */
   --app-height: 100vh;
   /* Search page: max visible height of the scrollable table area (was written as 150hv → 150vh) */
   --search-table-shell-max-h: 150vh;
@@ -43,10 +43,9 @@ html {
   font-size: var(--font-size-base);
 }
 
-/* Locked 1 viewport shell: homepage only */
+/* Locked 1 viewport shell: Home and Help use an internally scrollable content area. */
 html.page-home,
-html.page-about,
-html.page-contribute {
+html.page-help {
   height: var(--app-height);
   overflow: hidden;
 }
@@ -62,8 +61,7 @@ body {
 }
 
 body.page-home,
-body.page-about,
-body.page-contribute {
+body.page-help {
   height: 100%;
   min-height: 100%;
   overflow: hidden;
@@ -171,8 +169,7 @@ body.page-search {
 }
 
 body.page-home .main-content,
-body.page-about .main-content,
-body.page-contribute .main-content {
+body.page-help .main-content {
     flex: 1 1 auto;
     min-height: 0;
     overflow-x: hidden;
@@ -186,19 +183,13 @@ body.page-contribute .main-content {
 
 /* Home: split leftover vertical space 40% / 60% (top / bottom) ≈ 10% shift up from center */
 body.page-home .main-content::before,
-body.page-home .main-content::after,
-body.page-about .main-content::before,
-body.page-about .main-content::after,
-body.page-contribute .main-content::before,
-body.page-contribute .main-content::after {
+body.page-home .main-content::after {
     content: "";
     flex: 4 1 0;
     min-height: 0;
 }
 
-body.page-home .main-content::after,
-body.page-about .main-content::after,
-body.page-contribute .main-content::after {
+body.page-home .main-content::after {
     flex: 6 1 0;
 }
 
@@ -388,24 +379,166 @@ body.page-search .main-content {
 
 /* Home: statistic height follows content; vertical offset via main-content flex spacers */
 body.page-home .statistic,
-body.page-about .statistic,
-body.page-contribute .statistic {
+body.page-help .statistic {
     flex: 0 1 auto;
     align-self: stretch;
     min-height: 0;
 }
 
-body.page-about .statistic--about,
-body.page-contribute .statistic--about {
-    padding-top: clamp(1.75rem, 5vh, 3rem);
+body.page-help .statistic--help {
+    padding: clamp(1.75rem, 5vh, 3.25rem) 0;
 }
 
-.statistic-welcome--about > p + p {
-    margin-top: 1.1rem;
+.help-page {
+    width: min(1120px, 90vw);
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
-.statistic-welcome--about {
-    width: min(960px, 90vw);
+.help-page__title {
+    margin: 0 0 clamp(1.25rem, 3vh, 2rem);
+    color: #171717;
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 1.1;
+    text-align: center;
+}
+
+.help-card-stack {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.help-card {
+    min-width: 0;
+    padding: clamp(1.4rem, 3vw, 2.4rem);
+    scroll-margin-top: 1.5rem;
+    border: 1px solid rgba(17, 118, 189, 0.14);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 12px 30px rgba(36, 32, 24, 0.08);
+}
+
+.help-card h2 {
+    margin: 0 0 1rem;
+    color: #1176bd;
+    font-size: clamp(1.45rem, 2.2vw, 2rem);
+    line-height: 1.2;
+}
+
+.help-card > p {
+    margin: 0;
+    color: #292929;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.help-card > p + p {
+    margin-top: 1rem;
+}
+
+.help-card__intro {
+    max-width: 75ch;
+}
+
+.help-card__lead {
+    font-size: 1.08rem !important;
+    font-weight: 600;
+}
+
+.classification-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 1.5rem);
+    margin-top: 1.5rem;
+    align-items: start;
+}
+
+.classification-group {
+    min-width: 0;
+    padding: clamp(1.1rem, 2vw, 1.5rem);
+    border: 1px solid rgba(247, 149, 31, 0.24);
+    border-radius: 0.85rem;
+    background: #fffdf9;
+    box-shadow: 0 5px 16px rgba(36, 32, 24, 0.045);
+}
+
+.classification-group h3 {
+    margin: 0;
+    color: #222222;
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    line-height: 1.35;
+}
+
+.classification-subcategory {
+    min-width: 0;
+    margin-top: 1.15rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid rgba(17, 118, 189, 0.12);
+}
+
+.classification-subcategory h4 {
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    margin: 0;
+    color: #3a352e;
+    font-size: 0.98rem;
+    line-height: 1.45;
+}
+
+.classification-subcategory__code {
+    flex: 0 0 auto;
+    padding: 0.14rem 0.48rem;
+    border-radius: 999px;
+    background: rgba(17, 118, 189, 0.1);
+    color: #0d5f9a;
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.03em;
+}
+
+.classification-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.classification-examples li {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.classification-example {
+    display: inline-flex;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0.36rem 0.68rem;
+    border: 1px solid rgba(17, 118, 189, 0.25);
+    border-radius: 999px;
+    background: #ffffff;
+    color: #1176bd;
+    font-size: 0.86rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.classification-example:hover {
+    border-color: rgba(247, 149, 31, 0.72);
+    color: #0d5f9a;
+    box-shadow: 0 4px 12px rgba(247, 149, 31, 0.14);
+    transform: translateY(-1px);
+}
+
+.classification-example:focus-visible,
+a.contribute-email:focus-visible {
+    outline: 2px solid #f7951f;
+    outline-offset: 3px;
 }
 
 a.contribute-email {
@@ -1131,6 +1264,22 @@ tbody tr:hover {
 
   body {
     align-items: stretch;
+  }
+
+  .help-page {
+    width: min(100% - 1.5rem, 1120px);
+  }
+
+  .help-page__title {
+    text-align: left;
+  }
+
+  .help-card {
+    padding: 1.2rem;
+  }
+
+  .classification-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .navbar {

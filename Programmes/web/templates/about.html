@@ -1,20 +1,165 @@
 {% extends "base.html" %}
 
-{% block html_class %}page-about{% endblock %}
-{% block body_class %}page-about{% endblock %}
+{% block html_class %}page-help{% endblock %}
+{% block body_class %}page-help{% endblock %}
 
-{% block title %}About{% endblock %}
+{% block title %}Help &amp; Feedback{% endblock %}
 
 {% block searchbar %}{% endblock %}
 
 {% block content %}
+    <div class="statistic statistic--help">
+        <main class="help-page" aria-labelledby="help-page-title">
+            <h1 class="help-page__title" id="help-page-title">Help &amp; Feedback</h1>
 
-    <div class="statistic statistic--about">
-        <div class="statistic-welcome statistic-welcome--about">
-            <h1>About DbCAS</h1>
-            <p>DbCAS was created to address a growing challenge in the RNA splicing field: the rapid expansion and fragmentation of alternative-splicing databases across platforms, organisms, technologies, and analytical frameworks. As long-read sequencing, single-cell profiling, and context-specific transcriptomics accelerate, researchers increasingly struggle to locate, compare, and contextualize the resources most relevant to their work. DbCAS brings these datasets together into a single, coherent commons, making navigation and discovery easier and the landscape more transparent for the RNA splicing community.</p>
-            <p>The database was built on the basis of a systematic study. Starting from the idea that alternative splicing research frequently relies on AS-related datasets and resources, this work systematically surveyed around 4,000 highly AS-related publications from the past 10 years, generating approximately 10,000 references. From these, a curated list of databases was compiled. DbCAS will continue to track the accessibility of these resources and update the database list on a regular basis.</p>
-            <p>This initiative is led by Dr Kif Liakath-Ali and the SpliceLab at the University of Southampton, with the goal of supporting open, accessible, and integrative RNA splicing research worldwide.</p>
-        </div>
+            <div class="help-card-stack">
+                <section class="help-card" id="about-dbc" aria-labelledby="about-dbc-title">
+                    <h2 id="about-dbc-title">About DbCAS</h2>
+                    <p>DbCAS was created to address a growing challenge in the RNA splicing field: the rapid expansion and fragmentation of alternative-splicing databases across platforms, organisms, technologies, and analytical frameworks. As long-read sequencing, single-cell profiling, and context-specific transcriptomics accelerate, researchers increasingly struggle to locate, compare, and contextualize the resources most relevant to their work. DbCAS brings these datasets together into a single, coherent commons, making navigation and discovery easier and the landscape more transparent for the RNA splicing community.</p>
+                    <p>DbCAS was built through a systematic literature-mining workflow that began with 16,212 splicing-related publications retrieved across 2014–2026. Backward citation expansion and identity-based deduplication expanded the candidate pool to 383,439 publications. Keyword filtering, two model-assisted screening steps, and evidence-based website verification produced a curated collection of 287 databases covering 109 species/taxa. DbCAS will continue to monitor resource accessibility and update the collection regularly.</p>
+                    <p>This initiative is led by Dr Kif Liakath-Ali and the SpliceLab at the University of Southampton, with the goal of supporting open, accessible, and integrative RNA splicing research worldwide.</p>
+                </section>
+
+                <section class="help-card" id="classification-standard" aria-labelledby="classification-standard-title">
+                    <h2 id="classification-standard-title">Classification Standard</h2>
+                    <p class="help-card__intro">DbCAS organizes resources into four major classes and 12 subcategories. Select an example to open the corresponding database.</p>
+
+                    <div class="classification-grid">
+                        <article class="classification-group">
+                            <h3>I. Foundational Transcriptome Resources</h3>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-i-1">
+                                <h4 id="classification-i-1"><span class="classification-subcategory__code">I_1</span> Transcript and Isoform Model</h4>
+                                <ul class="classification-examples" aria-label="Examples for Transcript and Isoform Model">
+                                    <li><a class="classification-example" href="https://www.ensembl.org/index.html" target="_blank" rel="noopener noreferrer">Ensembl</a></li>
+                                    <li><a class="classification-example" href="https://www.ncbi.nlm.nih.gov/refseq/" target="_blank" rel="noopener noreferrer">RefSeq</a></li>
+                                    <li><a class="classification-example" href="https://www.gencodegenes.org/" target="_blank" rel="noopener noreferrer">GENCODE</a></li>
+                                </ul>
+                            </section>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-i-2">
+                                <h4 id="classification-i-2"><span class="classification-subcategory__code">I_2</span> Transcript and Isoform Expression</h4>
+                                <ul class="classification-examples" aria-label="Examples for Transcript and Isoform Expression">
+                                    <li><a class="classification-example" href="https://gtexportal.org/" target="_blank" rel="noopener noreferrer">GTEx Portal</a></li>
+                                    <li><a class="classification-example" href="https://www.ebi.ac.uk/gxa/home" target="_blank" rel="noopener noreferrer">Expression Atlas</a></li>
+                                    <li><a class="classification-example" href="https://www.proteinatlas.org/" target="_blank" rel="noopener noreferrer">Human Protein Atlas</a></li>
+                                </ul>
+                            </section>
+                        </article>
+
+                        <article class="classification-group">
+                            <h3>II. Core Splicing Outcome Resources</h3>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-ii-1">
+                                <h4 id="classification-ii-1"><span class="classification-subcategory__code">II_1</span> Alternative Splicing Event</h4>
+                                <ul class="classification-examples" aria-label="Examples for Alternative Splicing Event">
+                                    <li><a class="classification-example" href="https://vastdb.crg.eu/wiki/Main_Page" target="_blank" rel="noopener noreferrer">VastDB</a></li>
+                                    <li><a class="classification-example" href="https://bioinformatics.mdanderson.org/TCGASpliceSeq/" target="_blank" rel="noopener noreferrer">TCGA SpliceSeq</a></li>
+                                    <li><a class="classification-example" href="https://majiq.biociphers.org/majiqlopedia/" target="_blank" rel="noopener noreferrer">MAJIQlopedia</a></li>
+                                </ul>
+                            </section>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-ii-2">
+                                <h4 id="classification-ii-2"><span class="classification-subcategory__code">II_2</span> Splice-Site and Junction</h4>
+                                <ul class="classification-examples" aria-label="Examples for Splice-Site and Junction">
+                                    <li><a class="classification-example" href="https://snaptron.cs.jhu.edu/" target="_blank" rel="noopener noreferrer">Intropolis/Snaptron</a></li>
+                                    <li><a class="classification-example" href="http://www.rjunbase.org/" target="_blank" rel="noopener noreferrer">RJunBase</a></li>
+                                    <li><a class="classification-example" href="https://www.dbass.org.uk/" target="_blank" rel="noopener noreferrer">DBASS3/DBASS5</a></li>
+                                </ul>
+                            </section>
+                        </article>
+
+                        <article class="classification-group">
+                            <h3>III. Indirect Splicing Regulation Resources</h3>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-iii-1">
+                                <h4 id="classification-iii-1"><span class="classification-subcategory__code">III_1</span> Splicing-Regulator</h4>
+                                <ul class="classification-examples" aria-label="Examples for Splicing-Regulator">
+                                    <li><a class="classification-example" href="http://193.206.120.249/splicing_tissue.html" target="_blank" rel="noopener noreferrer">SpliceAid 2</a></li>
+                                    <li><a class="classification-example" href="http://111.198.139.65/" target="_blank" rel="noopener noreferrer">POSTAR3</a></li>
+                                    <li><a class="classification-example" href="https://attract.cnic.es/" target="_blank" rel="noopener noreferrer">ATtRACT</a></li>
+                                </ul>
+                            </section>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-iii-2">
+                                <h4 id="classification-iii-2"><span class="classification-subcategory__code">III_2</span> Variant and Splicing-Effect</h4>
+                                <ul class="classification-examples" aria-label="Examples for Variant and Splicing-Effect">
+                                    <li><a class="classification-example" href="https://cancersplicingqtl-hust.org/#/" target="_blank" rel="noopener noreferrer">CancerSplicingQTL</a></li>
+                                    <li><a class="classification-example" href="https://www.liulab.science/dbscsnv" target="_blank" rel="noopener noreferrer">dbscSNV</a></li>
+                                    <li><a class="classification-example" href="https://brb.nci.nih.gov/cgi-bin/splicing/splicing_main.cgi" target="_blank" rel="noopener noreferrer">MutSpliceDB</a></li>
+                                </ul>
+                            </section>
+                        </article>
+
+                        <article class="classification-group">
+                            <h3>IV. Specialized Other RNA Resources</h3>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-iv-1">
+                                <h4 id="classification-iv-1"><span class="classification-subcategory__code">IV_1</span> circRNA</h4>
+                                <ul class="classification-examples" aria-label="Examples for circRNA">
+                                    <li><a class="classification-example" href="https://circrna.org/" target="_blank" rel="noopener noreferrer">circBase</a></li>
+                                    <li><a class="classification-example" href="https://ngdc.cncb.ac.cn/circatlas/" target="_blank" rel="noopener noreferrer">circAtlas 3.0</a></li>
+                                    <li><a class="classification-example" href="https://www.circbank.cn/" target="_blank" rel="noopener noreferrer">circBank</a></li>
+                                </ul>
+                            </section>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-iv-2">
+                                <h4 id="classification-iv-2"><span class="classification-subcategory__code">IV_2</span> Chimeric and Fusion Transcript</h4>
+                                <ul class="classification-examples" aria-label="Examples for Chimeric and Fusion Transcript">
+                                    <li><a class="classification-example" href="https://kobic.re.kr/chimerdb/" target="_blank" rel="noopener noreferrer">ChimerDB 4.0</a></li>
+                                    <li><a class="classification-example" href="http://biosrv.org/chitars/" target="_blank" rel="noopener noreferrer">ChiTaRS 8.0</a></li>
+                                    <li><a class="classification-example" href="https://compbio.uth.edu/FusionGDB2" target="_blank" rel="noopener noreferrer">FusionGDB</a></li>
+                                </ul>
+                            </section>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-iv-3">
+                                <h4 id="classification-iv-3"><span class="classification-subcategory__code">IV_3</span> lncRNA Transcript and Isoform</h4>
+                                <ul class="classification-examples" aria-label="Examples for lncRNA Transcript and Isoform">
+                                    <li><a class="classification-example" href="https://v7.noncode.org/" target="_blank" rel="noopener noreferrer">NONCODE</a></li>
+                                    <li><a class="classification-example" href="https://www.lncipedia.org/" target="_blank" rel="noopener noreferrer">LNCipedia</a></li>
+                                    <li><a class="classification-example" href="https://fantom.gsc.riken.jp/cat/" target="_blank" rel="noopener noreferrer">FANTOM CAT</a></li>
+                                </ul>
+                            </section>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-iv-4">
+                                <h4 id="classification-iv-4"><span class="classification-subcategory__code">IV_4</span> NMD-Related Transcript</h4>
+                                <ul class="classification-examples" aria-label="Examples for NMD-Related Transcript">
+                                    <li><a class="classification-example" href="https://shiny.dieterichlab.org/app/NMDtxDB" target="_blank" rel="noopener noreferrer">NMDtxDB</a></li>
+                                    <li><a class="classification-example" href="https://nmdrht.uni-koeln.de/" target="_blank" rel="noopener noreferrer">NMDRHT</a></li>
+                                    <li><a class="classification-example" href="https://nadifkasrilab.shinyapps.io/SpliNEx" target="_blank" rel="noopener noreferrer">NMD AS database</a></li>
+                                </ul>
+                            </section>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-iv-5">
+                                <h4 id="classification-iv-5"><span class="classification-subcategory__code">IV_5</span> Alternative Polyadenylation and 3′-End Processing</h4>
+                                <ul class="classification-examples" aria-label="Examples for Alternative Polyadenylation and 3′-End Processing">
+                                    <li><a class="classification-example" href="https://polyasite.unibas.ch/" target="_blank" rel="noopener noreferrer">PolyASite Atlas</a></li>
+                                    <li><a class="classification-example" href="https://hanlaboratory.com/apa" target="_blank" rel="noopener noreferrer">APAatlas</a></li>
+                                    <li><a class="classification-example" href="https://shiny.imbei.uni-mainz.de/trend-db" target="_blank" rel="noopener noreferrer">TREND-DB</a></li>
+                                </ul>
+                            </section>
+
+                            <section class="classification-subcategory" aria-labelledby="classification-iv-6">
+                                <h4 id="classification-iv-6"><span class="classification-subcategory__code">IV_6</span> Other Specialized RNA Processing</h4>
+                                <ul class="classification-examples" aria-label="Examples for Other Specialized RNA Processing">
+                                    <li><a class="classification-example" href="http://retrogenomics3.uni-muenster.de:3838/exz-plot-d/" target="_blank" rel="noopener noreferrer">ExoPLOT</a></li>
+                                    <li><a class="classification-example" href="https://www.rnamd.org/directRMDB/" target="_blank" rel="noopener noreferrer">DirectRMDB</a></li>
+                                    <li><a class="classification-example" href="http://webapps2.ucalgary.ca/~groupii/index.html" target="_blank" rel="noopener noreferrer">Database for Bacterial Group II Introns</a></li>
+                                </ul>
+                            </section>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="help-card" id="feedback" aria-labelledby="feedback-title">
+                    <h2 id="feedback-title">Feedback and Contribute</h2>
+                    <p class="help-card__lead">Have a database to add? We'd love to hear from you!</p>
+                    <p>DbCAS is a community-driven resource, and we welcome your contributions. If you maintain an alternative-splicing database or know of a resource that is missing from our catalogue, we would be delighted to include it. Please reach out with the database name, link, publication and a brief description, we will add it to DbCAS.</p>
+                    <p><strong>Upload information for your database:</strong> <a class="contribute-email" href="https://docs.google.com/forms/d/e/1FAIpQLSee_IMs2d_1RSjCkxhbb2Zd6O9Z3h46mPk84H4mBLgdkvSPPQ/viewform?usp=publish-editor" target="_blank" rel="noopener noreferrer">Adding New Database to DbCAS</a></p>
+                    <p><strong>Contact:</strong> Dr Kif Liakath-Ali</p>
+                    <p><strong>Email:</strong> <a class="contribute-email" href="mailto:kif.liakath-ali@soton.ac.uk">kif.liakath-ali[at]soton.ac.uk</a></p>
+                </section>
+            </div>
+        </main>
     </div>
 {% endblock %}
