@@ -109,17 +109,34 @@ def contribute():
 @app.route('/search')
 def search():
     keyword = request.args.get('q', '').strip()
+    dataset = request.args.get("dataset", "full").strip().lower()
+    if dataset not in {"main", "full"}:
+        dataset = "full"
+
     main_cols, expand_cols, visible_cols = load_display_config()
     conn = sqlite3.connect(str(DB_PATH))
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
+
+    conditions = []
+    params = []
+    if dataset == "main":
+        conditions.append(
+            "LOWER(TRIM(COALESCE(\"main_collection\", ''))) = ?"
+        )
+        params.append("yes")
     if keyword:
         where_clause = " OR ".join([f'"{col}" LIKE ?' for col in visible_cols])
-        sql = f"SELECT {', '.join([f'\"{col}\"' for col in visible_cols])} FROM database_info WHERE {where_clause}"
-        params = tuple(['%' + keyword + '%'] * len(visible_cols))
-        cursor.execute(sql, params)
-    else:
-        cursor.execute(f"SELECT {', '.join([f'\"{col}\"' for col in visible_cols])} FROM database_info")
+        conditions.append(f"({where_clause})")
+        params.extend(['%' + keyword + '%'] * len(visible_cols))
+
+    sql = (
+        f"SELECT {', '.join([f'\"{col}\"' for col in visible_cols])} "
+        "FROM database_info"
+    )
+    if conditions:
+        sql += " WHERE " + " AND ".join(conditions)
+    cursor.execute(sql, tuple(params))
 
     data = cursor.fetchall()
     conn.close()
@@ -159,6 +176,7 @@ def search():
         'search.html',
         query=data,
         keyword=keyword,
+        dataset=dataset,
         main_columns=main_cols,
         expand_columns=expand_cols,
         tag_options=tag_options,

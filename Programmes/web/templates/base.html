@@ -31,8 +31,11 @@
         <div class="searchbar">
             <h1>Search for Alternative Splicing Databases</h1>
             <form method="GET" action="/search" id="search-block">
+                {% if dataset is defined %}
+                    <input type="hidden" name="dataset" value="{{ dataset }}">
+                {% endif %}
                 <div class="InputContainer">
-                    <input placeholder="Search… (default: all databases)" id="searchInput" class="input" name="q" type="text">
+                    <input placeholder="Search… (default: {{ 'main collection' if dataset is defined and dataset == 'main' else 'all databases' }})" id="searchInput" class="input" name="q" type="text">
                 </div>
                 <button id="searchButton" type="submit">
                     <span class="search-button__inner">

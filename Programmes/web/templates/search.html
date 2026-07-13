@@ -8,14 +8,31 @@
 {% block content %}
     <main class="table">
         <section class="header">
-            <h1>
+            <h1 class="search-header__keyword">
                 Keywords:
                 {% if keyword %}
                     <span style="color: red;">{{ keyword }}</span>
                 {% else %}
-                    <span style="color: gray;">(Default: all databases)</span>
+                    <span class="search-header__default" style="color: gray;">(Default: {{ 'main collection' if dataset == 'main' else 'all databases' }})</span>
                 {% endif %}
             </h1>
+            <form class="dataset-switch" method="GET" action="{{ url_for('search') }}" aria-label="Dataset">
+                <input type="hidden" name="q" value="{{ keyword }}">
+                <button
+                    class="dataset-switch__option{% if dataset == 'main' %} is-active{% endif %}"
+                    type="submit"
+                    name="dataset"
+                    value="main"
+                    aria-pressed="{{ 'true' if dataset == 'main' else 'false' }}"
+                >Main</button>
+                <button
+                    class="dataset-switch__option{% if dataset == 'full' %} is-active{% endif %}"
+                    type="submit"
+                    name="dataset"
+                    value="full"
+                    aria-pressed="{{ 'true' if dataset == 'full' else 'false' }}"
+                >Full</button>
+            </form>
             <div class="right-content">
                 <label for="rowsSelect">Show the top </label>
                     <select id="rowsSelect">

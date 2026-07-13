@@ -26,17 +26,29 @@ class WebSearchTests(unittest.TestCase):
                     database_name TEXT,
                     species TEXT,
                     doi TEXT,
-                    secret_note TEXT
+                    secret_note TEXT,
+                    main_collection TEXT
                 )
                 """
             )
             conn.execute(
-                "INSERT INTO database_info VALUES (?, ?, ?, ?)",
+                "INSERT INTO database_info VALUES (?, ?, ?, ?, ?)",
                 (
                     "Visible Alpha",
                     tags,
                     "10.1000/first;10.1000/second",
                     "hiddenneedle",
+                    "yes",
+                ),
+            )
+            conn.execute(
+                "INSERT INTO database_info VALUES (?, ?, ?, ?, ?)",
+                (
+                    "Full Beta",
+                    "tag001",
+                    "10.1000/full",
+                    "",
+                    "no",
                 ),
             )
             conn.execute(
@@ -58,6 +70,14 @@ class WebSearchTests(unittest.TestCase):
                     ("species", "species", "main", 1, 0, "t-word-tag"),
                     ("doi", "doi", "expand", 2, 0, "t-word-doi"),
                     ("secret_note", "secret_note", "hidden", 3, 0, None),
+                    (
+                        "main_collection",
+                        "main_collection",
+                        "hidden",
+                        4,
+                        0,
+                        None,
+                    ),
                 ],
             )
             conn.commit()
@@ -98,6 +118,38 @@ class WebSearchTests(unittest.TestCase):
         self.assertIn('<option value="tag050">tag050</option>', html)
         self.assertNotIn('<option value="tag055">tag055</option>', html)
         self.assertIn('"tag055"', html)
+
+    def test_dataset_switch_filters_main_collection_and_preserves_keyword(self):
+        full_html = self.client.get("/search").get_data(as_text=True)
+        self.assertIn("Visible Alpha", full_html)
+        self.assertIn("Full Beta", full_html)
+        full_button = re.search(
+            r'<button\s+([^>]*\bvalue="full"[^>]*)>', full_html
+        )
+        self.assertIsNotNone(full_button)
+        self.assertIn("is-active", full_button.group(1))
+        self.assertIn('aria-pressed="true"', full_button.group(1))
+
+        main_html = self.client.get(
+            "/search",
+            query_string={"q": "Visible", "dataset": "main"},
+        ).get_data(as_text=True)
+        self.assertIn("Visible Alpha", main_html)
+        self.assertNotIn("Full Beta", main_html)
+        self.assertIn('name="dataset" value="main"', main_html)
+        self.assertIn('name="q" value="Visible"', main_html)
+        self.assertRegex(
+            main_html,
+            r'<section class="header">\s*'
+            r'<h1 class="search-header__keyword">[\s\S]*?</h1>\s*'
+            r'<form class="dataset-switch"',
+        )
+
+        main_default_html = self.client.get(
+            "/search", query_string={"dataset": "main"}
+        ).get_data(as_text=True)
+        self.assertIn("(Default: main collection)", main_default_html)
+        self.assertIn("Search… (default: main collection)", main_default_html)
 
 
 class HelpPageTests(unittest.TestCase):
