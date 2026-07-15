@@ -1,5 +1,15 @@
 *
 !Programmes/
 !Programmes/**
+!.agents/
+!.agents/skills/
+!.agents/skills/url-accessibility-audit/
+!.agents/skills/url-accessibility-audit/**
 !.gitignore
 Programmes/**/*.xlsx
+Programmes/datacollection/runs/**
+!Programmes/datacollection/runs/
+!Programmes/datacollection/runs/.gitkeep
+Programmes/archive/datacollection/legacy_outputs/**
+Programmes/**/__pycache__/
+Programmes/**/*.pyc

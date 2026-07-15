@@ -28,7 +28,10 @@ def format_column_header(value):
     text = str(value).replace("_", " ").strip()
     if not text:
         return ""
-    return " ".join(part.capitalize() for part in text.split())
+    return " ".join(
+        part.upper() if part.lower() == "url" else part.capitalize()
+        for part in text.split()
+    )
 
 
 def load_display_config():

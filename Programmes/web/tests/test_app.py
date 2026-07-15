@@ -203,7 +203,15 @@ class HelpPageTests(unittest.TestCase):
         self.assertEqual(len(example_links), 36)
         self.assertIn(">Ensembl</a>", html)
         self.assertIn(">CancerSplicingQTL</a>", html)
+        self.assertIn(">CIRCpedia v3</a>", html)
+        self.assertIn(">circASbase</a>", html)
+        self.assertIn(">Cattle BodyMap Transcriptome Database</a>", html)
+        self.assertIn(">TranspoGene</a>", html)
         self.assertIn(">Database for Bacterial Group II Introns</a>", html)
+        self.assertNotIn(">circAtlas 3.0</a>", html)
+        self.assertNotIn(">circBank</a>", html)
+        self.assertNotIn(">FANTOM CAT</a>", html)
+        self.assertNotIn(">DirectRMDB</a>", html)
 
     def test_contribute_redirects_to_feedback_card(self):
         response = self.client.get("/contribute", follow_redirects=False)
