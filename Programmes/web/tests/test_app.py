@@ -25,6 +25,7 @@ class WebSearchTests(unittest.TestCase):
                 CREATE TABLE database_info (
                     database_name TEXT,
                     species TEXT,
+                    classification_code TEXT,
                     doi TEXT,
                     secret_note TEXT,
                     main_collection TEXT
@@ -32,20 +33,22 @@ class WebSearchTests(unittest.TestCase):
                 """
             )
             conn.execute(
-                "INSERT INTO database_info VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO database_info VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     "Visible Alpha",
                     tags,
+                    "I_1",
                     "10.1000/first;10.1000/second",
                     "hiddenneedle",
                     "yes",
                 ),
             )
             conn.execute(
-                "INSERT INTO database_info VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO database_info VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     "Full Beta",
                     "tag001",
+                    "II_1",
                     "10.1000/full",
                     "",
                     "no",
@@ -68,13 +71,21 @@ class WebSearchTests(unittest.TestCase):
                 [
                     ("database_name", "database_name", "main", 0, 0, "t-word"),
                     ("species", "species", "main", 1, 0, "t-word-tag"),
-                    ("doi", "doi", "expand", 2, 0, "t-word-doi"),
-                    ("secret_note", "secret_note", "hidden", 3, 0, None),
+                    (
+                        "classification_code",
+                        "classification_code",
+                        "main",
+                        2,
+                        0,
+                        "t-word-tag",
+                    ),
+                    ("doi", "doi", "expand", 3, 0, "t-word-doi"),
+                    ("secret_note", "secret_note", "hidden", 4, 0, None),
                     (
                         "main_collection",
                         "main_collection",
                         "hidden",
-                        4,
+                        5,
                         0,
                         None,
                     ),
@@ -118,6 +129,17 @@ class WebSearchTests(unittest.TestCase):
         self.assertIn('<option value="tag050">tag050</option>', html)
         self.assertNotIn('<option value="tag055">tag055</option>', html)
         self.assertIn('"tag055"', html)
+
+    def test_classification_header_links_to_help_explanation(self):
+        html = self.client.get("/search").get_data(as_text=True)
+
+        self.assertIn("Classification Code", html)
+        self.assertRegex(
+            html,
+            r'<a class="classification-help-link" '
+            r'href="/about#classification-standard" '
+            r'aria-label="Learn about database classification"[^>]*>\?</a>',
+        )
 
     def test_dataset_switch_filters_main_collection_and_preserves_keyword(self):
         full_html = self.client.get("/search").get_data(as_text=True)

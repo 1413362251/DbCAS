@@ -51,6 +51,9 @@
                         {% for col in main_columns %}
                             <th data-col="{{ col.name }}" data-type="{{ col.data_type or '' }}">
                                 {{ col.label }}
+                                {% if col.name == "classification_code" %}
+                                    <a class="classification-help-link" href="{{ url_for('about', _anchor='classification-standard') }}" aria-label="Learn about database classification" title="Learn about database classification">?</a>
+                                {% endif %}
                                 {% if col.data_type == "t-word-tag" %}
                                     {% set options = tag_options.get(col.name, []) %}
                                     <select class="tag-filter" data-col="{{ col.name }}">

@@ -1135,6 +1135,34 @@ thead th {
   z-index: 1;
 }
 
+.classification-help-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.05rem;
+    height: 1.05rem;
+    margin-left: 0.25rem;
+    border: 1px solid #0d5f9a;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #0d5f9a;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+.classification-help-link:hover {
+    background: #0d5f9a;
+    color: #ffffff;
+}
+
+.classification-help-link:focus-visible {
+    outline: 2px solid #0d5f9a;
+    outline-offset: 2px;
+}
+
 .tag-filter,
 .bool-filter,
 .num-sort {
