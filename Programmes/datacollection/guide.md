@@ -679,62 +679,61 @@ checkpoints/08_agent_chunks.csv
 
 #### 下一次 Stage 8 收集的多标签数据库能力分类
 
-> 实现状态（2026-07-13）：本节固定下一次 Stage 8 使用的 `multilabel_v2` 分类政策。本次只更新 guide，不重新运行 Stage 8。当前 Python pipeline、prompt 和测试仍校验旧的 30 列工作 schema；下一次真正运行 08 前，必须先迁移工作 schema、最终表头排序、prompt、校验器和测试，并使用新的 run ID。已有 v2 run 可以保持原工作 schema，但最终发布必须执行本节前述的 main/sub/hidden 规则并删除 `original_48_database`。
+> 实现状态（2026-07-20）：本节、`classification_standard.xlsx`、`full_collection_neural.xlsx` 和 DbCASweb 分类卡片已同步到 `multilabel_v2` 的 11 个小类；本次未重新运行 Stage 8。当前 Python pipeline、prompt 和测试仍校验旧的 30 列工作 schema；下一次真正运行 08 前，必须先迁移工作 schema、最终表头排序、prompt、校验器和测试，并使用新的 run ID。已有 v2 run 可以保持原工作 schema，但最终发布必须执行本节前述的 main/sub/hidden 规则并删除 `original_48_database`。
 
 分类是数据库的**多标签能力画像**，不强制选择唯一大类或唯一小类。一个数据库可以同时属于多个大类和小类；大类只能从已确认的小类代码推导，不允许独立填写出与小类矛盾的大类。所有分类名称、代码、置信度、理由和 t-word tags 必须使用英文。
 
 ##### 开设小类的必要条件
 
-新小类必须同时满足以下条件；“有 6 个例子”只是必要条件，不是充分条件：
+新小类必须同时满足以下条件；“有 5 个独立产品”只是必要条件，不是充分条件：
 
-1. 在当前 555 个数据库中，至少有 `6` 个证据明确的**不同数据库产品**。同一数据库的不同版本、旧站点、论文更新和镜像只计为一个产品。
+1. 在当前 287 个数据库行中，至少有 `5` 个证据明确的**不同数据库产品**。同一数据库的不同版本、旧站点、论文更新和镜像只计为一个产品。
 2. 成员共享同一种清晰的数据对象、处理机制或主要检索任务；不得为了达到数量门槛而合并不同层级概念。
 3. 该能力没有被现有小类充分覆盖。能用现有小类和 t-word tag 表达时，不额外开类。
 4. 官网、官方文档或数据库论文必须证明该能力实际可 search、browse、query、download 或以结构化记录提供。数据库名称、论文背景或摘要中的偶然术语不算成员证据。
-5. 少于 6 个产品的主题并入最接近的现有小类，并保留细粒度 t-word tag；没有合适主类时才进入 `IV_6`。
+5. 少于 5 个产品的主题并入最接近的现有小类，并保留细粒度 t-word tag；不得用纯 RNA modification/editing、通用门户或仅在背景中提及剪接的资源凑数。
 
-当前分类共 `4` 个大类、`12` 个小类。下表的数量来自当前 555 个数据库复审，允许多标签重叠；`≥` 表示已确认达到门槛，但仍可在下次 Stage 8 增加成员。
+当前分类共 `4` 个大类、`11` 个小类。下表数量来自 `full_collection_neural.xlsx` 的 287 个数据库行，允许多标签重叠。前三大类给出行数；第四类同时给出独立产品数与行数。
 
 | Major code | Major class | Subclass code | Subclass | Current reviewed members |
 |---|---|---|---|---:|
-| `I` | `I. Foundational Transcriptome Resources` | `I_1` | `Transcript and Isoform Model Resources` | `380` |
-| `I` | `I. Foundational Transcriptome Resources` | `I_2` | `Transcript and Isoform Expression Resources` | `178` |
-| `II` | `II. Core Splicing Outcome Resources` | `II_1` | `Alternative Splicing Event Resources` | `220` |
-| `II` | `II. Core Splicing Outcome Resources` | `II_2` | `Splice-Site and Junction Resources` | `147` |
-| `III` | `III. Indirect Splicing Regulation Resources` | `III_1` | `Splicing-Regulator Resources` | `25` |
-| `III` | `III. Indirect Splicing Regulation Resources` | `III_2` | `Variant and Splicing-Effect Resources` | `41` |
-| `IV` | `IV. Specialized Other RNA Resources` | `IV_1` | `circRNA Resources` | `35` |
-| `IV` | `IV. Specialized Other RNA Resources` | `IV_2` | `Chimeric and Fusion Transcript Resources` | `≥8` |
-| `IV` | `IV. Specialized Other RNA Resources` | `IV_3` | `lncRNA Transcript and Isoform Resources` | `44` |
-| `IV` | `IV. Specialized Other RNA Resources` | `IV_4` | `NMD-Related Transcript Resources` | `≥6` |
-| `IV` | `IV. Specialized Other RNA Resources` | `IV_5` | `Alternative Polyadenylation and 3′-End Processing Resources` | `13` |
-| `IV` | `IV. Specialized Other RNA Resources` | `IV_6` | `Other Specialized RNA Processing Resources` | `≥7` |
+| `I` | `I. Foundational Transcriptome Resources` | `I_1` | `Genome Annotation and Transcript Reference` | `175 rows` |
+| `I` | `I. Foundational Transcriptome Resources` | `I_2` | `Expression and Transcriptome Atlas` | `129 rows` |
+| `II` | `II. Core Splicing Outcome Resources` | `II_1` | `Alternative Splicing Event and Isoform` | `124 rows` |
+| `II` | `II. Core Splicing Outcome Resources` | `II_2` | `Splice Junction and Splice Site` | `83 rows` |
+| `III` | `III. Indirect Splicing Regulation Resources` | `III_1` | `Splicing Regulation and RBP` | `16 rows` |
+| `III` | `III. Indirect Splicing Regulation Resources` | `III_2` | `Splicing Variant and Disease Association` | `27 rows` |
+| `IV` | `IV. Specialized RNA Forms, Splicing and Cleavage Resources` | `IV_1` | `Circular RNA and Back-Splicing` | `21 products / 22 rows` |
+| `IV` | `IV. Specialized RNA Forms, Splicing and Cleavage Resources` | `IV_2` | `Chimeric and Fusion Transcript` | `8 products / 9 rows` |
+| `IV` | `IV. Specialized RNA Forms, Splicing and Cleavage Resources` | `IV_3` | `lncRNA Transcript and Isoform` | `31 products / 32 rows` |
+| `IV` | `IV. Specialized RNA Forms, Splicing and Cleavage Resources` | `IV_4` | `Alternative Polyadenylation and 3′-End Processing` | `12 products / 12 rows` |
+| `IV` | `IV. Specialized RNA Forms, Splicing and Cleavage Resources` | `IV_5` | `Other Specialized Splicing and Cleavage` | `11 products / 11 rows` |
 
 ##### 完整小类边界与代表数据库
 
-下表每类列出 6 个当前 555 集合中的不同数据库产品。例子在本表中不重复使用；实际分类仍允许一个数据库拥有多个标签。
+下表每类固定列出 3 个代表数据库。每个例子必须存在于当前 collection、`neural_link` 为 `primary` 或 `partial`，并且复核时能够进入实际 search/browse/query 页面；登录页、维护页、空白页或只返回 HTTP 的 endpoint 不合格。
 
-| Code | Positive inclusion rule | Exclusion and cross-classification rule | Six representative examples |
+| Code | Positive inclusion rule | Exclusion and cross-classification rule | Three representative examples |
 |---|---|---|---|
-| `I_1` | Searchable transcript/isoform IDs, exon–intron models, reference annotations, transcript sequences, ORF-aware transcript structures or full-length isoforms | Gene-only annotation or a paper that merely mentions transcripts is insufficient | GENCODE; RefSeq; Ensembl; AceView; MANE; APPRIS |
-| `I_2` | Transcript/isoform-level expression, abundance, usage, fraction, TPM/FPKM/counts or other quantitative measurements | Gene-level expression alone is insufficient | Expression Atlas; Human Protein Atlas; ARCHS4; recount3; GTEx Portal; UCSC Toil RNA-seq Recompute Compendium |
-| `II_1` | AS events, PSI/delta-PSI, exon skipping, intron retention, A5SS/A3SS, MXE, differential splicing, isoform switching, cryptic-exon inclusion or other explicit splicing outcomes | Static transcript models without event-level information remain `I_1` only | VastDB; ASpedia; TCGA SpliceSeq; MAJIQlopedia; PastDB; Alternative Exon Database (AEDB) |
-| `II_2` | Splice sites, donor/acceptor sites, splice junctions, junction usage, branch points, intron boundaries, back-splice junctions, cryptic/de novo splice sites or breakpoint-linked RNA junctions | Exon names without site or junction records are insufficient | RJunBase; intropolis (queried through Snaptron); DBASS3/DBASS5; SpliceVault; SpliceInfo; SnapMine |
-| `III_1` | RBPs, splicing factors, motifs, cis-elements, spliceosome components, CLIP binding, perturbations or other direct splicing-regulatory evidence | General transcription regulation, ordinary RBP expression or a discussion of regulation is insufficient | SpliceAid 2; ATtRACT; POSTAR3; RBPWorld; SFMetaDB; SplicingLore |
-| `III_2` | sQTL/isoQTL/junction-QTL, splice-altering SNP/SNV/indel/mutation or an explicit variant-to-splicing/isoform consequence | Ordinary eQTL, GWAS, mutation or structural-variant records without a splicing/isoform consequence are insufficient | CancerSplicingQTL; dbscSNV; MutSpliceDB; SpliceVarDB; ValidSpliceMut; Alternative Splicing Mutation Database (ASMD) |
-| `IV_1` | Searchable circRNA records, circular isoforms, back-splice junctions, circRNA expression, interactions, functions or disease associations | A background mention of circRNA is insufficient. Add `II_2` for back-splice junctions, `I_1` for full-length circular isoforms and `I_2` for quantitative expression | circBase; circAtlas 3.0; circBank; CIRCpedia v3; CircNet 2.0; CircInteractome |
-| `IV_2` | Chimeric/fusion transcripts, partner genes, fusion junctions, RNA breakpoints or breakpoint-linked transcript structures | Fusion proteins or DNA structural variants without RNA products are insufficient. `trans-splicing` is a mechanism tag, not a co-equal subclass; assign `IV_2` only when it produces a chimeric/fusion transcript object | ChimerDB 4.0; ChiTaRS 8.0; FusionGDB; TumorFusions; FusionCancer; AtFusionDB |
-| `IV_3` | A dedicated searchable lncRNA catalog/module providing lncRNA transcript records, isoforms, splice variants, transcript structures, expression, interactions or functional annotations | A general database containing a few lncRNA genes, or a paper that only mentions lncRNA, is insufficient. Add `I_1`/`I_2` when transcript models or expression are provided | NONCODE; LNCipedia; FANTOM CAT; LncBook 2.0; LncExpDB; DIANA-LncBase v3.0 |
-| `IV_4` | Searchable NMD targets, NMD status, NMD sensitivity, NMD predictions, premature-stop annotations or NMD-coupled AS records | Cryptic or aberrant splicing alone is not NMD evidence. Put cryptic/aberrant events in `II_1`, sites/junctions in `II_2`, and variant-induced cases additionally in `III_2` | NMDtxDB; NMDRHT; NMD AS database; fast DB; TassDB2; Transcript View of H-InvDB/VarySysDB |
-| `IV_5` | APA events, poly(A) sites, cleavage sites, PAS usage, alternative terminal exons or alternative 3′UTR isoforms with searchable or downloadable records | Ordinary 3′UTR sequence or gene expression without alternative 3′-end processing is insufficient | PolyASite Atlas; APAatlas; TREND-DB; APADB; APASdb; SNP2APA |
-| `IV_6` | Specialized RNA-processing records not covered by `IV_1`–`IV_5`, currently including RNA modification/editing, TE/retroelement-derived transcript processing, organellar RNA processing, self-splicing/group-I/group-II introns and dedicated non-fusion trans-splicing resources | This is a controlled residual class, not a generic RNA catch-all. General transcriptome/expression portals and a mere mention of an unusual RNA type are insufficient | ExoPLOT; HESAS; TranspoGene/microTranspoGene; DirectRMDB; MeT-DB V2.0; mitochondria.matticklab.com |
+| `I_1` | Searchable transcript/isoform IDs, exon–intron models, reference annotations, transcript sequences, ORF-aware transcript structures or full-length isoforms | Gene-only annotation or a paper that merely mentions transcripts is insufficient | Ensembl; AceView; APPRIS |
+| `I_2` | Transcript/isoform-level expression, abundance, usage, fraction, TPM/FPKM/counts or other quantitative measurements | Gene-level expression alone is insufficient | GTEx Portal; Expression Atlas; CattleGTEx |
+| `II_1` | AS events, PSI/delta-PSI, exon skipping, intron retention, A5SS/A3SS, MXE, differential splicing, isoform switching, cryptic-exon inclusion or other explicit splicing outcomes | Static transcript models without event-level information remain `I_1` only | VastDB; TCGA SpliceSeq; MAJIQlopedia |
+| `II_2` | Splice sites, donor/acceptor sites, splice junctions, junction usage, branch points, intron boundaries, back-splice junctions, cryptic/de novo splice sites or breakpoint-linked RNA junctions | Exon names without site or junction records are insufficient | Intropolis/Snaptron; RJunBase; DBASS3/DBASS5 |
+| `III_1` | RBPs, splicing factors, motifs, cis-elements, spliceosome components, CLIP binding, perturbations or other direct splicing-regulatory evidence | General transcription regulation, ordinary RBP expression or a discussion of regulation is insufficient | SpliceAid 2; POSTAR3; Nova brain-specific splicing |
+| `III_2` | sQTL/isoQTL/junction-QTL, splice-altering SNP/SNV/indel/mutation or an explicit disease-associated splicing/isoform consequence | Ordinary eQTL, GWAS, mutation or structural-variant records without a splicing/isoform consequence are insufficient | CancerSplicingQTL; ValidSpliceMut; ExonSkipAD |
+| `IV_1` | Searchable circRNA records, circular isoforms, back-splice junctions, circRNA expression, interactions, functions or disease associations | A background mention of circRNA is insufficient. Add `II_2` for back-splice junctions, `I_1` for full-length circular isoforms and `I_2` for quantitative expression | circBase; CIRCpedia v3; FL-circAS |
+| `IV_2` | Chimeric/fusion transcripts, partner genes, fusion junctions, RNA breakpoints or breakpoint-linked transcript structures | Fusion proteins or DNA structural variants without RNA products are insufficient. `trans-splicing` remains a mechanism tag unless it produces a chimeric/fusion transcript object | ChimerDB 4.0; FusionGDB; ChiTaRS 2.1 |
+| `IV_3` | A dedicated searchable lncRNA catalog/module providing lncRNA transcript records, isoforms, splice variants, transcript structures, expression, interactions or functional annotations | A general database containing a few lncRNA genes, or a paper that only mentions lncRNA, is insufficient. Add `I_1`/`I_2` when transcript models or expression are provided | NONCODE; LNCipedia; LncBook 2.0 |
+| `IV_4` | APA events, poly(A) sites, cleavage sites, PAS usage, alternative terminal exons or alternative 3′UTR isoforms with searchable or downloadable records | Ordinary 3′UTR sequence or gene expression without alternative 3′-end processing is insufficient | PolyASite Atlas; APAatlas; TREND-DB |
+| `IV_5` | Specialized splicing/cleavage records for exon skipping, intron retention, branch points, TE exonization, cryptic/tandem splice sites, NMD-coupled AS or lncRNA-specific AS | Controlled residual only: pure RNA modification/editing, general portals and background-only mentions are excluded | SpliceAPP Branch Point Query; ExoPLOT; NMD AS database |
 
-##### Fusion/trans-splicing and NMD/cryptic boundary
+##### Fusion/trans-splicing、APA 与 IV_5 边界
 
 - `Fusion` and `chimeric` remain together because their shared database object is a transcript joining sequence from different genes or loci, normally represented by partner genes, RNA junctions and breakpoints.
-- `trans-splicing` is not listed in the subclass name because it is a biogenesis mechanism. Use the t-word tag `trans-splicing`; a spliced-leader or other non-fusion trans-splicing resource belongs to `II_1`, `II_2` and/or `IV_6` according to its actual records.
-- `NMD` is a transcript-surveillance and degradation mechanism. `Cryptic` and `aberrant` describe splicing outcomes and therefore must not be merged with NMD merely to reach the six-product threshold.
-- A cryptic exon that is explicitly annotated as NMD-sensitive may receive both `II_1` and `IV_4`; without NMD evidence it receives only the applicable `II`/`III` labels and t-word tags.
+- `trans-splicing` is not listed in the subclass name because it is a biogenesis mechanism. Use the t-word tag `trans-splicing`; assign `IV_2` only when the database provides chimeric/fusion transcript products.
+- `APA` and alternative 3′-end processing belong to `IV_4`.
+- `NMD` alone does not create a subclass. Only a dedicated NMD-coupled alternative-splicing resource may enter `IV_5`, together with applicable `II_1`/`II_2` codes.
+- `IV_5` is not a generic RNA catch-all. Pure RNA modification/editing and self-splicing/group-I/group-II intron resources are excluded from the formal fourth class.
 
 ##### `classification_code` and hidden taxonomy fields
 
@@ -743,8 +742,8 @@ checkpoints/08_agent_chunks.csv
 - `main` and `t-word-tag` values must be supported independently by the database page or database paper.
 - A t-word tag never creates a major/subclass membership by itself.
 - Use English only and separate multiple values with `;`.
-- Formal subclass codes must use the fixed order `I_1;I_2;II_1;II_2;III_1;III_2;IV_1;IV_2;IV_3;IV_4;IV_5;IV_6`.
-- Major classes are derived automatically: `I_1/I_2 → I`, `II_1/II_2 → II`, `III_1/III_2 → III`, and `IV_1–IV_6 → IV`.
+- Formal subclass codes must use the fixed order `I_1;I_2;II_1;II_2;III_1;III_2;IV_1;IV_2;IV_3;IV_4;IV_5`.
+- Major classes are derived automatically: `I_1/I_2 → I`, `II_1/II_2 → II`, `III_1/III_2 → III`, and `IV_1–IV_5 → IV`.
 
 ##### 旧代码迁移
 
@@ -760,8 +759,11 @@ checkpoints/08_agent_chunks.csv
 | `O2` | `IV_2` when RNA chimeric/fusion products are present |
 | `O3` | Remove as a subclass; retain `trans-splicing` as a t-word tag and assign `IV_2` only for chimeric/fusion products |
 | `O4` | `IV_3` after confirming a dedicated searchable lncRNA catalog/module |
-| `O5` | Split: NMD evidence → `IV_4`; cryptic/aberrant event → `II_1`; cryptic/de novo site or junction → `II_2`; variant-induced case → also `III_2` |
-| `O6` | APA/3′-end evidence → `IV_5`; eligible specialized residual → `IV_6`; remove the tag from general portals without a qualifying specialized module |
+| `O5` | NMD-coupled AS → `IV_5`; cryptic/aberrant event → `II_1`; cryptic/de novo site or junction → `II_2`; variant-induced case → also `III_2` |
+| `O6` | APA/3′-end evidence → `IV_4`; eligible specialized splicing/cleavage residual → `IV_5`; pure modification/editing and general portals lose the IV code |
+| current `IV_4` | Only explicit NMD-coupled AS moves to new `IV_5`; other NMD/general transcript resources lose the IV code |
+| current `IV_5` | APA/3′-end resources move to new `IV_4` |
+| current `IV_6` | Eligible exon skipping/intron retention/branchpoint/TE exonization/cryptic-tandem resources move to new `IV_5`; all other residual themes lose the IV code |
 
 现有 `qualification_basis` 与新小类的基础映射只用于产生候选，Agent 仍必须检查实际页面：
 
@@ -802,9 +804,11 @@ checkpoints/08_agent_chunks.csv
 - CattleGTEx 同时提供 isoform expression、AS events、junction-level data 和 sQTL，应记录 `I_2;II_1;II_2;III_2`。
 - circBase 提供 back-splice-junction records，应至少记录 `II_2;IV_1`。
 - ChiTaRS 提供 chimeric/fusion transcripts 和 junctions，应记录适用的 `I_1;II_2;IV_2`，并使用 `trans-splicing` t-word tag；不得恢复独立的 trans-splicing 小类。
-- NMD AS database 应记录 `II_1;II_2;IV_4`；NMD 与 AS 两种能力都不能丢失。
-- SpliceVault 的 cryptic-site/mis-splicing and variant evidence 应记录 `II_1;II_2;III_2` 和相关 t-word tags，不得仅因出现 cryptic splicing 而记录 `IV_4`。
-- APAatlas 提供 APA/3′-end processing records，应记录 `IV_5`，并按其 transcript models/expression 能力增加 `I_1` 和/或 `I_2`。
+- NMD AS database 应记录 `II_1;II_2;IV_5`；NMD 与 AS 两种能力都不能丢失。
+- SpliceVault 的 cryptic-site/mis-splicing and variant evidence 应记录 `II_1;II_2;III_2` 和相关 t-word tags，不得仅因出现 cryptic splicing 而记录 `IV_5`。
+- APAatlas 提供 APA/3′-end processing records，应记录 `IV_4`，并按其 transcript models/expression 能力增加 `I_1` 和/或 `I_2`。
+- LncAS2Cancer 同时提供 dedicated lncRNA catalog 和 lncRNA-specific AS records，应记录 `IV_3;IV_5`，并保留适用的 `II` 标签。
+- ExonSkipAD 提供 AD 脑组织 exon-skipping、致病关联及 ES-inducing SNP annotations，应记录 `II_1;III_1;III_2;IV_5`。
 
 #### Stage 8 finalization: database-level deduplication, evidence and accessibility audit
 
