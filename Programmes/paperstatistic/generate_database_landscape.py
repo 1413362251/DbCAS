@@ -9,7 +9,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
+import shutil
+import textwrap
 from datetime import datetime
 from pathlib import Path
 
@@ -27,6 +30,9 @@ DEFAULT_CLASSIFICATION = Path(
     r"D:\DbCAS\Programmes\datacollection\core_data\classification_standard.xlsx"
 )
 DEFAULT_OUTPUT = Path(r"D:\DbCAS\Programmes\paperstatistic")
+DEFAULT_ARTICLE_FIGURE = Path(
+    r"D:\DbCAS\Writing\DbCAS_edited_Cerys_media\image1.jpg"
+)
 
 COL = {
     "id": "id",
@@ -44,23 +50,29 @@ COL = {
 
 UNKNOWN = "Unknown / not specified"
 
-# Shared visual system.
+# Shared visual system. Panel colors are sampled from the original Fig. 1 JPG
+# and kept fixed so regenerated figures retain the manuscript's visual identity.
 INK = "#262626"
 GRID = "#E4E7EA"
 AXIS = "#6B7075"
-BLUE = "#3E6D8E"
-LIGHT_BLUE = "#8FB7CF"
-GOLD = "#D6A64B"
-ORANGE = "#D97941"
-OLIVE = "#7A8F55"
 GREY = "#B8BEC5"
 EDGE = "#4B535A"
 
+PANEL_COLORS = {
+    "A": "#3B548C",
+    "B": "#421955",
+    "C": "#47B971",
+    "D": "#ABCD3A",
+    "E": "#F0E319",
+    "F": "#2C7890",
+    "G": "#21918C",
+}
+
 MAJOR_COLORS = {
-    "I": BLUE,
-    "II": GOLD,
-    "III": ORANGE,
-    "IV": OLIVE,
+    "I": PANEL_COLORS["A"],
+    "II": PANEL_COLORS["E"],
+    "III": PANEL_COLORS["C"],
+    "IV": PANEL_COLORS["B"],
 }
 
 
@@ -240,6 +252,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--classification", type=Path, default=DEFAULT_CLASSIFICATION)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--top-n", type=int, default=15)
+    parser.add_argument(
+        "--no-article-sync",
+        action="store_true",
+        help="Generate all figures without replacing the Markdown article's Fig. 1.",
+    )
     return parser.parse_args()
 
 
@@ -472,7 +489,30 @@ def save_figure(fig: plt.Figure, output_dir: Path, stem: str) -> None:
     plt.close(fig)
 
 
-def add_vertical_labels(ax: plt.Axes, bars, summary: pd.DataFrame) -> None:
+def save_composite_figure(fig: plt.Figure, output_dir: Path) -> Path:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    stem = "Figure1_database_landscape"
+    common = {"facecolor": "white", "bbox_inches": "tight"}
+    fig.savefig(output_dir / f"{stem}.svg", format="svg", **common)
+    fig.savefig(output_dir / f"{stem}.png", format="png", dpi=600, **common)
+    jpg_path = output_dir / f"{stem}.jpg"
+    fig.savefig(
+        jpg_path,
+        format="jpg",
+        dpi=300,
+        pil_kwargs={"quality": 95, "subsampling": 0},
+        **common,
+    )
+    plt.close(fig)
+    return jpg_path
+
+
+def add_vertical_labels(
+    ax: plt.Axes,
+    bars,
+    summary: pd.DataFrame,
+    fontsize: float = 8,
+) -> None:
     ymax = max(summary["n"].max() * 1.23, 1)
     ax.set_ylim(0, ymax)
     for bar, row in zip(bars, summary.itertuples(index=False)):
@@ -482,9 +522,47 @@ def add_vertical_labels(ax: plt.Axes, bars, summary: pd.DataFrame) -> None:
             f"{row.n} ({row.pct:.1f}%)",
             ha="center",
             va="bottom",
-            fontsize=8,
+            fontsize=fontsize,
             color=INK,
         )
+
+
+def ordered_summary(
+    summary: pd.DataFrame,
+    order: list[str],
+    stem: str,
+) -> pd.DataFrame:
+    indexed = summary.set_index("label")
+    missing = set(order) - set(indexed.index)
+    if missing:
+        raise AssertionError(f"Expected categories missing for {stem}: {sorted(missing)}")
+    return indexed.loc[order].reset_index()
+
+
+def draw_simple_vertical(
+    ax: plt.Axes,
+    summary: pd.DataFrame,
+    order: list[str],
+    colors: list[str],
+    stem: str,
+    value_fontsize: float = 8,
+    tick_fontsize: float = 8,
+) -> None:
+    plotted = ordered_summary(summary, order, stem)
+
+    bars = ax.bar(
+        plotted["label"],
+        plotted["n"],
+        color=colors,
+        edgecolor=EDGE,
+        linewidth=0.65,
+        width=0.62,
+    )
+    add_vertical_labels(ax, bars, plotted, value_fontsize)
+    ax.set_ylabel("Databases (n)")
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.tick_params(axis="x", labelsize=tick_fontsize)
+    style_axis(ax, "y")
 
 
 def plot_simple_vertical(
@@ -494,42 +572,53 @@ def plot_simple_vertical(
     stem: str,
     output_dir: Path,
 ) -> None:
-    indexed = summary.set_index("label")
-    missing = set(order) - set(indexed.index)
-    if missing:
-        raise AssertionError(f"Expected categories missing for {stem}: {sorted(missing)}")
-    plotted = indexed.loc[order].reset_index()
-
     fig, ax = plt.subplots(figsize=(7.2, 4.2))
-    bars = ax.bar(
-        plotted["label"],
-        plotted["n"],
-        color=colors,
-        edgecolor=EDGE,
-        linewidth=0.65,
-        width=0.62,
-    )
-    add_vertical_labels(ax, bars, plotted)
-    ax.set_ylabel("Databases (n)")
-    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    style_axis(ax, "y")
+    draw_simple_vertical(ax, summary, order, colors, stem)
     fig.subplots_adjust(left=0.11, right=0.98, bottom=0.19, top=0.96)
     save_figure(fig, output_dir, stem)
 
 
-def plot_creation_year(data: pd.DataFrame, total: int, output_dir: Path) -> dict:
+def creation_year_summary(
+    data: pd.DataFrame, total: int
+) -> tuple[pd.DataFrame, dict]:
     years = pd.to_numeric(data[COL["year"]], errors="coerce")
     observed = years.dropna().astype(int)
     year_range = list(range(int(observed.min()), int(observed.max()) + 1))
     counts = observed.value_counts().reindex(year_range, fill_value=0)
     missing_n = int(years.isna().sum())
 
-    labels = [str(year) for year in year_range] + ["Unknown"]
-    values = counts.tolist() + [missing_n]
-    colors = [BLUE] * len(year_range) + [GREY]
+    summary = pd.DataFrame(
+        {
+            "label": [str(year) for year in year_range] + ["Unknown"],
+            "n": counts.tolist() + [missing_n],
+        }
+    )
+    summary["pct"] = summary["n"] / total * 100
+    peak_year = int(counts.idxmax())
+    peak_n = int(counts.max())
+    stats = {
+        "peak_year": peak_year,
+        "peak_n": peak_n,
+        "peak_pct": peak_n / total * 100,
+        "missing_year": missing_n,
+        "year_min": int(observed.min()),
+        "year_max": int(observed.max()),
+    }
+    return summary, stats
+
+
+def draw_creation_year(
+    ax: plt.Axes,
+    summary: pd.DataFrame,
+    tick_every: int = 1,
+    value_fontsize: float = 6.4,
+    tick_fontsize: float = 6.6,
+) -> None:
+    labels = summary["label"].tolist()
+    values = summary["n"].tolist()
+    colors = [GREY if label == "Unknown" else PANEL_COLORS["A"] for label in labels]
     x = np.arange(len(labels))
 
-    fig, ax = plt.subplots(figsize=(7.2, 4.2))
     bars = ax.bar(
         x,
         values,
@@ -548,27 +637,25 @@ def plot_creation_year(data: pd.DataFrame, total: int, output_dir: Path) -> dict
                 str(value),
                 ha="center",
                 va="bottom",
-                fontsize=6.4,
+                fontsize=value_fontsize,
             )
-    ax.set_xticks(x, labels, rotation=90, ha="center")
-    ax.tick_params(axis="x", labelsize=6.6, pad=2)
+    displayed_labels = [
+        label if label == "Unknown" or index % tick_every == 0 else ""
+        for index, label in enumerate(labels)
+    ]
+    ax.set_xticks(x, displayed_labels, rotation=90, ha="center")
+    ax.tick_params(axis="x", labelsize=tick_fontsize, pad=2)
     ax.set_xlabel("Publication year")
     ax.set_ylabel("Databases (n)")
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     style_axis(ax, "y")
+
+
+def plot_creation_year(summary: pd.DataFrame, output_dir: Path) -> None:
+    fig, ax = plt.subplots(figsize=(7.2, 4.2))
+    draw_creation_year(ax, summary)
     fig.subplots_adjust(left=0.10, right=0.995, bottom=0.26, top=0.95)
     save_figure(fig, output_dir, "01_database_creation_year")
-
-    peak_year = int(counts.idxmax())
-    peak_n = int(counts.max())
-    return {
-        "peak_year": peak_year,
-        "peak_n": peak_n,
-        "peak_pct": peak_n / total * 100,
-        "missing_year": missing_n,
-        "year_min": int(observed.min()),
-        "year_max": int(observed.max()),
-    }
 
 
 def developmental_summary(data: pd.DataFrame, total: int) -> pd.DataFrame:
@@ -598,24 +685,28 @@ def token_set_summary(
     return exclusive_summary(labels, total)
 
 
-def plot_ranked_coverage(
-    selected: pd.DataFrame,
-    stem: str,
-    output_dir: Path,
-) -> None:
+def ordered_ranked_coverage(selected: pd.DataFrame) -> pd.DataFrame:
     known = selected[selected["label"].ne(UNKNOWN)].sort_values(
         ["n", "label"], ascending=[False, True]
     )
     unknown = selected[selected["label"].eq(UNKNOWN)]
-    plotted = pd.concat([known, unknown], ignore_index=True)
+    return pd.concat([known, unknown], ignore_index=True)
+
+
+def draw_ranked_coverage(
+    ax: plt.Axes,
+    selected: pd.DataFrame,
+    color: str,
+    value_fontsize: float = 7.7,
+    tick_fontsize: float = 8,
+) -> None:
+    plotted = ordered_ranked_coverage(selected)
 
     y = np.arange(len(plotted), dtype=float)
-    if not unknown.empty:
+    if plotted["label"].eq(UNKNOWN).any():
         y[-1] += 0.45
-    colors = [GREY if label == UNKNOWN else BLUE for label in plotted["label"]]
+    colors = [GREY if label == UNKNOWN else color for label in plotted["label"]]
 
-    fig_height = max(5.6, 0.35 * len(plotted) + 1.35)
-    fig, ax = plt.subplots(figsize=(7.2, fig_height))
     bars = ax.barh(
         y,
         plotted["n"],
@@ -633,15 +724,27 @@ def plot_ranked_coverage(
             f"{row.n} ({row.pct:.1f}%)",
             ha="left",
             va="center",
-            fontsize=7.7,
+            fontsize=value_fontsize,
         )
     ax.set_yticks(y, plotted["label"])
     ax.invert_yaxis()
     ax.set_xlabel("Databases (n)")
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.tick_params(axis="y", length=0)
+    ax.tick_params(axis="y", length=0, labelsize=tick_fontsize)
     style_axis(ax, "x")
     ax.spines["left"].set_visible(False)
+
+
+def plot_ranked_coverage(
+    selected: pd.DataFrame,
+    stem: str,
+    output_dir: Path,
+    color: str,
+) -> None:
+    plotted = ordered_ranked_coverage(selected)
+    fig_height = max(5.6, 0.35 * len(plotted) + 1.35)
+    fig, ax = plt.subplots(figsize=(7.2, fig_height))
+    draw_ranked_coverage(ax, selected, color)
     fig.subplots_adjust(left=0.39, right=0.98, bottom=0.10, top=0.98)
     save_figure(fig, output_dir, stem)
 
@@ -710,7 +813,25 @@ def classification_rows(
     return pd.DataFrame(rows)
 
 
-def plot_classification(rows: pd.DataFrame, output_dir: Path) -> None:
+def classification_labels(rows: pd.DataFrame, wrap_width: int | None) -> list[str]:
+    if wrap_width is None:
+        return rows["label"].tolist()
+
+    labels: list[str] = []
+    for row in rows.itertuples(index=False):
+        prefix = "    " if row.level == "sub" else ""
+        wrapped = textwrap.wrap(row.label.strip(), width=wrap_width) or [""]
+        labels.append(("\n" + prefix).join([prefix + wrapped[0], *wrapped[1:]]))
+    return labels
+
+
+def draw_classification(
+    ax: plt.Axes,
+    rows: pd.DataFrame,
+    value_fontsize: float = 7.5,
+    tick_fontsize: float = 7.2,
+    wrap_width: int | None = None,
+) -> None:
     y = np.arange(len(rows))
     colors = [
         MAJOR_COLORS[row.major_code]
@@ -719,7 +840,6 @@ def plot_classification(rows: pd.DataFrame, output_dir: Path) -> None:
         for row in rows.itertuples(index=False)
     ]
 
-    fig, ax = plt.subplots(figsize=(7.2, 7.2))
     bars = ax.barh(
         y,
         rows["n"],
@@ -737,20 +857,174 @@ def plot_classification(rows: pd.DataFrame, output_dir: Path) -> None:
             f"{row.n} ({row.pct:.1f}%)",
             ha="left",
             va="center",
-            fontsize=7.5,
+            fontsize=value_fontsize,
             fontweight="bold" if row.level == "major" else "normal",
         )
-    ax.set_yticks(y, rows["label"])
+    ax.set_yticks(y, classification_labels(rows, wrap_width))
     for tick, level in zip(ax.get_yticklabels(), rows["level"]):
         tick.set_fontweight("bold" if level == "major" else "normal")
     ax.invert_yaxis()
     ax.set_xlabel("Databases (n)")
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.tick_params(axis="y", length=0, labelsize=7.2)
+    ax.tick_params(axis="y", length=0, labelsize=tick_fontsize)
     style_axis(ax, "x")
     ax.spines["left"].set_visible(False)
+
+
+def plot_classification(rows: pd.DataFrame, output_dir: Path) -> None:
+    fig, ax = plt.subplots(figsize=(7.2, 7.2))
+    draw_classification(ax, rows)
     fig.subplots_adjust(left=0.48, right=0.98, bottom=0.08, top=0.985)
     save_figure(fig, output_dir, "08_database_classification")
+
+
+PANEL_TITLES = {
+    "A": "Distribution of database creation years",
+    "B": "Developmental stages represented across databases",
+    "C": "Sequencing resolutions represented across databases",
+    "D": "Sequencing technologies represented across databases",
+    "E": "Disease contexts represented across databases",
+    "F": "Brain/CNS regions represented across databases",
+    "G": "Species represented across databases",
+    "H": "Database resource classification",
+}
+
+
+def add_panel_heading(ax: plt.Axes, panel: str) -> None:
+    ax.set_title(PANEL_TITLES[panel], fontsize=11, fontweight="bold", pad=10)
+    ax.text(
+        -0.12,
+        1.06,
+        f"{panel}.",
+        transform=ax.transAxes,
+        fontsize=12,
+        fontweight="bold",
+        ha="left",
+        va="bottom",
+    )
+    ax.xaxis.label.set_size(9.5)
+    ax.yaxis.label.set_size(9.5)
+
+
+def compose_figure1(
+    year_summary: pd.DataFrame,
+    development: pd.DataFrame,
+    resolution: pd.DataFrame,
+    read_technology: pd.DataFrame,
+    disease: pd.DataFrame,
+    regions: pd.DataFrame,
+    species: pd.DataFrame,
+    class_rows: pd.DataFrame,
+    output_dir: Path,
+) -> Path:
+    fig, axes = plt.subplots(
+        4,
+        2,
+        figsize=(14.4, 20.5),
+        gridspec_kw={"height_ratios": [0.78, 0.78, 1.35, 1.35]},
+        constrained_layout=True,
+    )
+    fig.suptitle("DbCAS metadata content", fontsize=18, fontweight="bold")
+
+    draw_creation_year(
+        axes[0, 0],
+        year_summary,
+        tick_every=3,
+        value_fontsize=7.2,
+        tick_fontsize=7.6,
+    )
+    draw_simple_vertical(
+        axes[0, 1],
+        development,
+        ["Single stage", "Multiple stages", UNKNOWN],
+        [PANEL_COLORS["B"], PANEL_COLORS["B"], GREY],
+        "Figure1 panel B",
+        value_fontsize=9,
+        tick_fontsize=9,
+    )
+    draw_simple_vertical(
+        axes[1, 0],
+        resolution,
+        ["Bulk only", "Single-cell only", "Bulk + single-cell"],
+        [PANEL_COLORS["C"]] * 3,
+        "Figure1 panel C",
+        value_fontsize=9,
+        tick_fontsize=9,
+    )
+    draw_simple_vertical(
+        axes[1, 1],
+        read_technology,
+        ["Short-read only", "Contains long-read"],
+        [PANEL_COLORS["D"]] * 2,
+        "Figure1 panel D",
+        value_fontsize=9,
+        tick_fontsize=9,
+    )
+    draw_ranked_coverage(
+        axes[2, 0], disease, PANEL_COLORS["E"], value_fontsize=8.2, tick_fontsize=8.2
+    )
+    draw_ranked_coverage(
+        axes[2, 1], regions, PANEL_COLORS["F"], value_fontsize=8.2, tick_fontsize=8.2
+    )
+    draw_ranked_coverage(
+        axes[3, 0], species, PANEL_COLORS["G"], value_fontsize=8.2, tick_fontsize=8.2
+    )
+    draw_classification(
+        axes[3, 1],
+        class_rows,
+        value_fontsize=8.0,
+        tick_fontsize=7.8,
+        wrap_width=38,
+    )
+
+    for panel, ax in zip("ABCDEFGH", axes.flat):
+        add_panel_heading(ax, panel)
+
+    fig.set_constrained_layout_pads(
+        w_pad=0.16,
+        h_pad=0.18,
+        wspace=0.10,
+        hspace=0.12,
+    )
+    return save_composite_figure(fig, output_dir)
+
+
+def gene_expression_summary(data: pd.DataFrame, total: int) -> pd.DataFrame:
+    normalized = data["gene_expression_available"].map(
+        lambda value: normalize_space(value).lower()
+    )
+    invalid = set(normalized) - {"yes", "no"}
+    if invalid:
+        raise ValueError(
+            f"Unexpected gene_expression_available values: {sorted(invalid)}"
+        )
+    labels = normalized.map({"yes": "Available", "no": "Not available"})
+    return exclusive_summary(labels, total)
+
+
+def validate_exclusive_totals(
+    total: int,
+    summaries: dict[str, pd.DataFrame],
+) -> None:
+    for name, summary in summaries.items():
+        observed = int(summary["n"].sum())
+        if observed != total:
+            raise AssertionError(
+                f"{name} categories sum to {observed}, expected {total}."
+            )
+
+
+def sync_article_figure(source: Path, destination: Path) -> None:
+    if not source.is_file():
+        raise FileNotFoundError(f"Composite figure was not generated: {source}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_name(f".{destination.name}.tmp")
+    try:
+        shutil.copyfile(source, temporary)
+        os.replace(temporary, destination)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
 
 
 def summary_records(frame: pd.DataFrame) -> list[dict]:
@@ -774,13 +1048,14 @@ def main() -> None:
     standard = load_classification_standard(args.classification)
     total = int(data[COL["id"]].nunique())
 
-    year_stats = plot_creation_year(data, total, args.output)
+    year_summary, year_stats = creation_year_summary(data, total)
+    plot_creation_year(year_summary, args.output)
 
     development = developmental_summary(data, total)
     plot_simple_vertical(
         development,
         ["Single stage", "Multiple stages", UNKNOWN],
-        [BLUE, GOLD, GREY],
+        [PANEL_COLORS["B"], PANEL_COLORS["B"], GREY],
         "02_developmental_stage_breadth",
         args.output,
     )
@@ -798,7 +1073,7 @@ def main() -> None:
     plot_simple_vertical(
         resolution,
         ["Bulk only", "Single-cell only", "Bulk + single-cell"],
-        [BLUE, LIGHT_BLUE, GOLD],
+        [PANEL_COLORS["C"]] * 3,
         "03_sequencing_resolution",
         args.output,
     )
@@ -816,19 +1091,34 @@ def main() -> None:
     plot_simple_vertical(
         read_technology,
         ["Short-read only", "Contains long-read"],
-        [BLUE, GOLD],
+        [PANEL_COLORS["D"]] * 2,
         "04_read_technology",
         args.output,
     )
 
     disease = disease_coverage(data, total, args.top_n)
-    plot_ranked_coverage(disease, "05_disease_context_top15", args.output)
+    plot_ranked_coverage(
+        disease,
+        "05_disease_context_top15",
+        args.output,
+        PANEL_COLORS["E"],
+    )
 
     regions = region_coverage(data, total, args.top_n)
-    plot_ranked_coverage(regions, "06_brain_cns_region_top15", args.output)
+    plot_ranked_coverage(
+        regions,
+        "06_brain_cns_region_top15",
+        args.output,
+        PANEL_COLORS["F"],
+    )
 
     species = species_coverage(data, total, args.top_n)
-    plot_ranked_coverage(species, "07_species_coverage_top15", args.output)
+    plot_ranked_coverage(
+        species,
+        "07_species_coverage_top15",
+        args.output,
+        PANEL_COLORS["G"],
+    )
 
     class_rows = classification_rows(data, standard, total)
     plot_classification(class_rows, args.output)
@@ -846,8 +1136,32 @@ def main() -> None:
     plot_simple_vertical(
         accessibility,
         ["Live", "Dead"],
-        [BLUE, GREY],
+        [PANEL_COLORS["A"], GREY],
         "09_database_accessibility",
+        args.output,
+    )
+
+    gene_expression = gene_expression_summary(data, total)
+    validate_exclusive_totals(
+        total,
+        {
+            "development": development,
+            "resolution": resolution,
+            "read technology": read_technology,
+            "accessibility": accessibility,
+            "gene expression": gene_expression,
+        },
+    )
+
+    composite_jpg = compose_figure1(
+        year_summary,
+        development,
+        resolution,
+        read_technology,
+        disease,
+        regions,
+        species,
+        class_rows,
         args.output,
     )
 
@@ -862,7 +1176,10 @@ def main() -> None:
         "species": summary_records(species),
         "classification": summary_records(class_rows),
         "accessibility": summary_records(accessibility),
+        "gene_expression": summary_records(gene_expression),
     }
+    if not args.no_article_sync:
+        sync_article_figure(composite_jpg, DEFAULT_ARTICLE_FIGURE)
     print(json.dumps(report, indent=2, ensure_ascii=True))
 
 
