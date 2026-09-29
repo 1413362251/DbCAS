@@ -77,6 +77,7 @@ body.page-search {
 
 .navbar {
     width: 100%;
+    box-sizing: border-box;
     flex: 0 0 auto;
     background-color: #000;
     color: white;
@@ -834,7 +835,7 @@ body.page-home .statistic-welcome > p {
     display: grid;
     width: 100%;
     min-width: 0;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(0.45rem, 2vw, 1.5rem);
     align-items: stretch;
 }
@@ -909,6 +910,11 @@ body.page-home .statistic-welcome > p {
     color: #111;
 }
 
+.statistic-welcome-claim .claimer a {
+    color: #1176bd;
+    text-underline-offset: 0.2em;
+}
+
 .statistic-welcome-claim p {
     margin: 0;
     font-size: clamp(0.9rem, 0.35vw + 0.82rem, 1rem);
@@ -949,6 +955,18 @@ body.page-home .statistic-welcome > p {
     flex: 0 0 auto;
     min-width: 0;
     max-width: min(62vw, 34rem);
+}
+
+.footer-logo-row a {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.footer .footer-logo-row .logo-footer,
+.footer .footer-logo-row #footer-logo {
+    max-width: 100%;
 }
 
 .logo-footer {
@@ -1482,7 +1500,7 @@ tbody tr:hover {
   .statistic-welcome-card-container {
     width: 100%;
     min-width: 0;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(0.35rem, 1.8vw, 0.85rem);
   }
 
@@ -1601,6 +1619,7 @@ tbody tr:hover {
   .home-search-form__input {
     width: 100%;
     min-width: 0;
+    box-sizing: border-box;
   }
 
   .home-search-form .home-search-button {

@@ -30,7 +30,7 @@
         </form>
         <div class="statistic-welcome">
             <h1>Welcome to DbCAS</h1>
-            <p>DbCAS is a unified gateway to the growing landscape of alternative-splicing and transcript-level resources. Its systematic literature-mining workflow began with more than 16,000 splicing-related publications retrieved across 2014–2026. Backward citation expansion and identity-based deduplication enlarged the candidate pool to more than 383,000 publications, which were then narrowed through keyword filtering, two model-assisted screening steps, and evidence-based website verification. The resulting curated collection is presented in one accessible, searchable platform, helping researchers find suitable resources for isoform biology, long-read data, and transcriptomic diversity.</p>
+            <p>DbCAS is a community‑driven, unified gateway to the rapidly expanding landscape of alternative‑splicing and transcript‑level resources. It brings together a curated collection of databases spanning isoform biology, long‑read sequencing, single‑cell transcriptomics, and broader transcriptomic diversity, presenting them within a single accessible, searchable platform. By consolidating these otherwise scattered resources, DbCAS helps researchers quickly identify suitable tools and datasets, navigate the complexity of isoform‑resolved data, and stay informed as new splicing‑focused databases continue to emerge.</p>
             <div class="statistic-welcome-cards-stack">
                 <div class="statistic-welcome-card-container">
                     <div class="statistic-welcome-card">
@@ -41,10 +41,6 @@
                         <p class="statistic-welcome-card__label">Species / Taxa</p>
                         <p class="statistic-welcome-card__value">109</p>
                     </div>
-                    <div class="statistic-welcome-card">
-                        <p class="statistic-welcome-card__label">Candidate Pool</p>
-                        <p class="statistic-welcome-card__value">383,439</p>
-                    </div>
                 </div>
             </div>
             <div class="statistic-welcome-claim">
@@ -53,8 +49,8 @@
                     <p>Publication DOI:xxxx </p>
                 </div>
                 <div class="claimer">
-                    <h3>Disclaimer</h3>
-                    <p>This database.... </p>
+                    <h3><a href="{{ url_for('disclaimer') }}">Disclaimer</a></h3>
+                    <p>For general research reference only.</p>
                 </div>
             </div>
         </div>

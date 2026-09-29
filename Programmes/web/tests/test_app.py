@@ -137,7 +137,7 @@ class WebSearchTests(unittest.TestCase):
         self.assertRegex(
             html,
             r'<a class="classification-help-link" '
-            r'href="/about#classification-standard" '
+            r'href="/classifications#classification-standard" '
             r'aria-label="Learn about database classification"[^>]*>\?</a>',
         )
 
@@ -179,40 +179,47 @@ class HelpPageTests(unittest.TestCase):
         web_app.app.config.update(TESTING=True)
         self.client = web_app.app.test_client()
 
-    def test_help_page_contains_updated_content_and_three_ordered_cards(self):
-        response = self.client.get("/about")
-        self.assertEqual(response.status_code, 200)
-        html = response.get_data(as_text=True)
-
-        self.assertIn("<title>Help &amp; Feedback</title>", html)
-        self.assertIn("16,212 splicing-related publications", html)
-        self.assertIn("candidate pool to 383,439 publications", html)
-        self.assertIn("287 databases covering 109 species/taxa", html)
-
-        card_ids = [
-            'id="about-dbc"',
-            'id="classification-standard"',
-            'id="feedback"',
-        ]
-        card_positions = [html.index(card_id) for card_id in card_ids]
-        self.assertEqual(card_positions, sorted(card_positions))
-        self.assertIn("Feedback and Contribute", html)
-
+    def test_information_pages_split_content_and_preserve_navigation(self):
+        pages = {
+            "/about": ("About", "about-dbc"),
+            "/classifications": ("Classifications", "classification-standard"),
+            "/help": ("Help &amp; Feedback", "feedback"),
+        }
         nav_labels = [
             ">Home</a>",
             ">Search</a>",
+            ">Classifications</a>",
             ">Help &amp; Feedback</a>",
-            ">SpliceLab</a>",
+            ">About</a>",
         ]
-        nav_positions = [html.index(label) for label in nav_labels]
-        self.assertEqual(nav_positions, sorted(nav_positions))
-        self.assertNotIn('href="/contribute"', html)
+        for path, (title, card_id) in pages.items():
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, 200)
+                html = response.get_data(as_text=True)
+                self.assertIn(f"<title>{title}</title>", html)
+                self.assertIn(f'id="{card_id}"', html)
+                for _, other_id in pages.values():
+                    if other_id != card_id:
+                        self.assertNotIn(f'id="{other_id}"', html)
+                nav_positions = [html.index(label) for label in nav_labels]
+                self.assertEqual(nav_positions, sorted(nav_positions))
+                self.assertNotIn(">SpliceLab</a>", html)
+                self.assertNotIn('href="/contribute"', html)
 
-        self.assertIn("docs.google.com/forms/", html)
-        self.assertIn('href="mailto:kif.liakath-ali@soton.ac.uk"', html)
+        about_html = self.client.get("/about").get_data(as_text=True)
+        self.assertIn("16,212 splicing-related publications", about_html)
+        self.assertIn("candidate pool to 383,439 publications", about_html)
+        self.assertIn("287 databases covering 109 species/taxa", about_html)
+        self.assertIn("Principal Investigator at SpliceLab", about_html)
+
+        help_html = self.client.get("/help").get_data(as_text=True)
+        self.assertIn("Feedback and Contribute", help_html)
+        self.assertIn("docs.google.com/forms/", help_html)
+        self.assertIn('href="mailto:kif.liakath-ali@soton.ac.uk"', help_html)
 
     def test_help_page_contains_complete_classification_snapshot(self):
-        html = self.client.get("/about").get_data(as_text=True)
+        html = self.client.get("/classifications").get_data(as_text=True)
 
         self.assertEqual(html.count('class="classification-group"'), 4)
         self.assertEqual(html.count('class="classification-subcategory"'), 11)
@@ -253,7 +260,7 @@ class HelpPageTests(unittest.TestCase):
         response = self.client.get("/contribute", follow_redirects=False)
 
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(response.headers["Location"].endswith("/about#feedback"))
+        self.assertTrue(response.headers["Location"].endswith("/help#feedback"))
 
 
 if __name__ == "__main__":

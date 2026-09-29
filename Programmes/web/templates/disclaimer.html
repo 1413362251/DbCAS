@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block html_class %}page-help{% endblock %}
+{% block body_class %}page-help{% endblock %}
+
+{% block title %}Disclaimer{% endblock %}
+
+{% block searchbar %}{% endblock %}
+
+{% block content %}
+    <div class="statistic statistic--help">
+        <main class="help-page" aria-labelledby="help-page-title">
+            <h1 class="help-page__title" id="help-page-title">Disclaimer</h1>
+
+            <div class="help-card-stack">
+                <section class="help-card" aria-labelledby="help-page-title">
+                    <p>DbCAS is a community‑driven catalogue of publicly available alternative‑splicing databases. The information presented on this website is provided for general research reference only. While we aim to maintain accurate, up‑to‑date listings, DbCAS does not independently verify the content, quality, or reliability of any external databases linked or described here.</p>
+                    <p>All external resources remain the responsibility of their respective creators and maintainers. DbCAS does not endorse, control, or guarantee the availability, functionality, or scientific validity of third‑party tools, datasets, or websites. Users should evaluate all resources critically and consult original sources when making research decisions.</p>
+                    <p>DbCAS is provided “as is,” without warranties of any kind, express or implied. We accept no liability for errors, omissions, interruptions, or any outcomes arising from the use of information or links contained on this site.</p>
+                    <p>Contributors submitting new databases affirm that they have the right to share the information provided. DbCAS reserves the right to review, modify, or decline submissions at its discretion.</p>
+                </section>
+            </div>
+        </main>
+    </div>
+{% endblock %}

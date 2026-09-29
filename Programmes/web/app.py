@@ -104,9 +104,24 @@ def about():
     return render_template("about.html")
 
 
+@app.route("/classifications")
+def classifications():
+    return render_template("classifications.html")
+
+
+@app.route("/help")
+def help_feedback():
+    return render_template("help.html")
+
+
+@app.route("/disclaimer")
+def disclaimer():
+    return render_template("disclaimer.html")
+
+
 @app.route("/contribute")
 def contribute():
-    return redirect(url_for("about", _anchor="feedback"))
+    return redirect(url_for("help_feedback", _anchor="feedback"))
 
 
 @app.route('/search')
