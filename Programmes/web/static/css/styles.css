@@ -942,13 +942,6 @@ body.page-home .statistic {
     line-height: 1.25;
 }
 
-.visitor-map__description {
-    margin: 0 0 1rem;
-    font-size: 0.95rem;
-    line-height: 1.55;
-    color: #444;
-}
-
 .visitor-map__stage {
     width: min(100%, 720px);
     min-width: 0;
