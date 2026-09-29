@@ -55,6 +55,21 @@
             </div>
         </div>
 
+        <section class="visitor-map" id="visitor-map" aria-labelledby="visitor-map-title">
+            <h2 id="visitor-map-title">Visitor map</h2>
+            <p class="visitor-map__description">Pageviews for the period shown · Approximate visitor locations</p>
+            <div class="visitor-map__stage">
+                <p class="visitor-map__status" id="visitor-map-status" role="status" hidden></p>
+                <div
+                    class="visitor-map__widget"
+                    id="visitor-map-widget"
+                    data-script-src="https://mapmyvisitors.com/map.js?d=n_gpUNHZsZpCJnWeMvkLXE8fH_1c4Pdn3QKiJkq4B-w&amp;w=a&amp;co=faf9f5&amp;cl=d8ddd9&amp;cmo=f7951f&amp;cmn=f7951f&amp;ct=2e2e2e&amp;t=m"
+                ></div>
+                <noscript><p>Enable JavaScript to display the visitor map.</p></noscript>
+            </div>
+            <a class="visitor-map__link" href="https://mapmyvisitors.com/web/1c8jl" target="_blank" rel="noopener noreferrer">View visitor statistics</a>
+        </section>
     </div>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/visitor-map.js') }}" defer></script>
 {% endblock %}
