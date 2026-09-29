@@ -1031,7 +1031,7 @@ body.page-home .statistic {
     align-items: center;
     justify-content: flex-end;
     gap: var(--footer-logo-gap);
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     min-width: 0;
     max-width: min(62vw, 34rem);
 }
@@ -1064,14 +1064,13 @@ body.page-home .statistic {
 }
 
 .rights {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
     min-width: 0;
     text-align: left;
     margin: 0;
     font-size: clamp(0.65rem, 1.6vh, 0.8rem);
     line-height: 1.15;
-    white-space: normal;
-    max-width: min(42vw, 22rem);
+    white-space: nowrap;
 }
 
 
@@ -1684,8 +1683,6 @@ tbody tr:hover {
 
   .rights {
     font-size: clamp(0.6rem, 1.4vh, 0.75rem);
-    white-space: normal;
-    max-width: 42vw;
   }
 
   .home-search-form {
@@ -1718,8 +1715,32 @@ tbody tr:hover {
     font-size: clamp(0.74rem, 2.6vw + 0.55rem, 0.88rem);
   }
 
+  .footer {
+    flex-direction: column;
+    justify-content: center;
+    height: auto;
+    max-height: none;
+    padding: 0.4rem var(--footer-padding-x);
+    gap: 0.4rem;
+  }
+
+  .footer-logo-row {
+    width: min(100%, 24rem);
+    max-width: none;
+    flex: 0 0 auto;
+  }
+
+  .footer-logo-row a {
+    justify-content: center;
+  }
+
+  .footer .logo-footer,
+  .footer #footer-logo {
+    max-height: 2rem;
+  }
+
   .rights {
-    font-size: 0.7rem;
+    font-size: clamp(0.65rem, 3vw, 0.7rem);
   }
 }
 
