@@ -991,7 +991,7 @@ body.page-home .statistic-welcome > p {
     margin: 0;
     font-size: clamp(0.65rem, 1.6vh, 0.8rem);
     line-height: 1.15;
-    white-space: nowrap;
+    white-space: normal;
     max-width: min(42vw, 22rem);
 }
 
