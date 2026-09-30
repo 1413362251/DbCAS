@@ -1203,18 +1203,28 @@ body.page-search main.table {
     outline-offset: 2px;
 }
 
+.dataset-switch__help {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    line-height: 1;
+}
+
 .dataset-switch__help summary {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     width: 1.15rem;
     height: 1.15rem;
+    padding: 0;
     border: 1px solid currentColor;
     border-radius: 50%;
     list-style: none;
     color: inherit;
     font-size: 0.75rem;
     font-weight: 700;
+    line-height: 1;
+    text-align: center;
     cursor: pointer;
 }
 
