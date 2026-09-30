@@ -162,9 +162,8 @@ gene_expression_available -> Gene Expression Available
 | 22 | `gene_expression_available` | 内部基因表达可用性标记 |
 | 23 | `visualization_methods` | 内部可视化方法信息 |
 | 24 | `main_collection` | 内部集合归属标记 |
-| 25 | `tomb` | 墓碑合集归属：`1` 为 Tomb，`0` 为其他；不由 URL 自动检查改写 |
 
-`tomb=1` 的记录只进入 Tomb；Main 与 Full 排除这些记录。Tomb 的缺失字段在网页显示为 `unknown`；数值、URL 和 DOI 的缺失值仍保存为空，避免破坏排序或生成无效链接。
+Main 展示 `main_collection=yes` 的推荐数据库；Full 展示全部数据库，包括当前不可访问的记录。集合归属不由 URL 自动检查改写。缺失字段在网页显示为 `unknown`；数值、URL 和 DOI 的缺失值仍保存为空，避免破坏排序或生成无效链接。
 
 ### 8.4 可直接复制的模板表头顺序
 
@@ -193,5 +192,4 @@ neural_link
 gene_expression_available
 visualization_methods
 main_collection
-tomb
 ```

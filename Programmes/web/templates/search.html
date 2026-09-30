@@ -6,7 +6,7 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
-    {% set empty_value = 'unknown' if dataset == 'tomb' else '—' %}
+    {% set empty_value = 'unknown' %}
     <main class="table">
         <section class="header">
             <h1 class="search-header__keyword">
@@ -137,7 +137,7 @@
                                 {% elif col.render == "access" %}
                                     {% if row[col.name] is none %}
                                         <span class="status-dot status-unknown" title="Unknown"></span>
-                                        <span>{{ 'unknown' if dataset == 'tomb' else 'Unknown' }}</span>
+                                        <span>{{ empty_value }}</span>
                                     {% elif row[col.name] in (1, True, '1') %}
                                         <span class="status-dot status-ok" title="Accessible"></span>
                                         <span>Accessible</span>
@@ -253,7 +253,7 @@
                                             {% elif col.render == "access" %}
                                                 {% if row[col.name] is none %}
                                                     <span class="status-dot status-unknown" title="Unknown"></span>
-                                                    <span>{{ 'unknown' if dataset == 'tomb' else 'Unknown' }}</span>
+                                                    <span>{{ empty_value }}</span>
                                                 {% elif row[col.name] in (1, True, '1') %}
                                                     <span class="status-dot status-ok" title="Accessible"></span>
                                                     <span>Accessible</span>

@@ -173,52 +173,63 @@ class WebSearchTests(unittest.TestCase):
         self.assertIn("(Default: main collection)", main_default_html)
         self.assertIn("Search… (default: main collection)", main_default_html)
 
-    def test_tomb_collection_is_empty_without_a_membership_column(self):
+    def test_retired_collection_url_defaults_to_full(self):
         response = self.client.get("/search", query_string={"dataset": "tomb"})
         self.assertEqual(response.status_code, 200)
         html = response.get_data(as_text=True)
-        self.assertNotIn("Visible Alpha", html)
-        self.assertNotIn("Full Beta", html)
-        self.assertIn("No databases found in this collection.", html)
-        self.assertIn('name="dataset" value="tomb"', html)
-        self.assertIn("Search… (default: tomb collection)", html)
+        self.assertIn("Visible Alpha", html)
+        self.assertIn("Full Beta", html)
+        self.assertIn('name="dataset" value="full"', html)
+        self.assertNotIn('value="tomb"', html)
+        self.assertNotIn("About the Tomb collection", html)
+        self.assertIn("Search… (default: all databases)", html)
 
-    def test_tomb_membership_separates_collections_and_preserves_search(self):
+    def test_full_includes_unrecommended_inaccessible_databases(self):
         conn = sqlite3.connect(self.db_path)
         try:
-            conn.execute("ALTER TABLE database_info ADD COLUMN tomb INTEGER DEFAULT 0")
+            conn.execute("ALTER TABLE database_info ADD COLUMN citation INTEGER")
+            conn.execute("ALTER TABLE database_info ADD COLUMN accessibility INTEGER DEFAULT 0")
             conn.execute(
-                "INSERT INTO database_info VALUES (?, ?, ?, ?, ?, ?, ?)",
-                ("Archived Gamma", "tag001", "I_1", "", "", "yes", 1),
+                "INSERT INTO database_info VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                ("Archived Gamma", "tag001", "I_1", "", "", "no", 42, 0),
             )
-            conn.execute(
+            conn.executemany(
                 "INSERT INTO display_columns VALUES (?, ?, ?, ?, ?, ?)",
-                ("tomb", "tomb", "hidden", 6, 0, None),
+                [
+                    ("citation", "citation", "main", 6, 0, "t-numeric-cite"),
+                    ("accessibility", "accessibility", "main", 7, 1, "t-bool-access"),
+                ],
             )
             conn.commit()
         finally:
             conn.close()
 
-        for dataset in ("main", "full"):
-            html = self.client.get(
-                "/search", query_string={"dataset": dataset}
-            ).get_data(as_text=True)
-            self.assertNotIn("Archived Gamma", html)
-            self.assertIn("Visible Alpha", html)
+        main_html = self.client.get(
+            "/search", query_string={"dataset": "main"}
+        ).get_data(as_text=True)
+        self.assertNotIn("Archived Gamma", main_html)
+        self.assertIn("Visible Alpha", main_html)
+
+        full_html = self.client.get(
+            "/search", query_string={"dataset": "full"}
+        ).get_data(as_text=True)
+        for name in ("Visible Alpha", "Full Beta", "Archived Gamma"):
+            self.assertIn(name, full_html)
 
         html = self.client.get(
-            "/search", query_string={"dataset": "tomb", "q": "Archived"}
+            "/search", query_string={"dataset": "full", "q": "Archived"}
         ).get_data(as_text=True)
         self.assertIn("Archived Gamma", html)
         self.assertNotIn("Visible Alpha", html)
         self.assertNotIn("Full Beta", html)
         self.assertIn('name="q" value="Archived"', html)
-        self.assertNotIn('data-col="tomb"', html)
+        self.assertIn('data-num="42"', html)
+        self.assertIn("Not accessible", html)
         self.assertIn('<span class="empty-value">unknown</span>', html)
         self.assertNotIn('href="https://doi.org/unknown"', html)
 
         unmatched = self.client.get(
-            "/search", query_string={"dataset": "tomb", "q": "Visible"}
+            "/search", query_string={"dataset": "main", "q": "Archived"}
         ).get_data(as_text=True)
         self.assertIn("No databases found in this collection matching your search.", unmatched)
 
@@ -259,8 +270,8 @@ class HelpPageTests(unittest.TestCase):
         about_html = self.client.get("/about").get_data(as_text=True)
         self.assertIn("16,212 splicing-related publications", about_html)
         self.assertIn("candidate pool to 383,439 publications", about_html)
-        self.assertIn("287 databases covering 109 species/taxa", about_html)
-        self.assertIn("Principal Investigator at SpliceLab", about_html)
+        self.assertIn("382 databases covering 166 species and taxa", about_html)
+        self.assertIn("Principal Investigator of SpliceLab", about_html)
 
         help_html = self.client.get("/help").get_data(as_text=True)
         self.assertIn("Feedback and Contribute", help_html)

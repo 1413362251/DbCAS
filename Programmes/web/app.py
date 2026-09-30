@@ -21,18 +21,7 @@ DATASET_OPTIONS = [
         "label": "Full",
         "default_label": "all databases",
         "description": (
-            "All brain-linked splicing databases with a recorded instance of "
-            "availability in at least one of the latest two review rounds "
-            "within an eight-month window."
-        ),
-    },
-    {
-        "value": "tomb",
-        "label": "Tomb",
-        "default_label": "tomb collection",
-        "description": (
-            "Databases that remained inaccessible across more than two "
-            "review rounds within an eight-month window."
+            "All databases in DbCAS, including resources that are currently inaccessible."
         ),
     },
 ]
@@ -169,13 +158,6 @@ def search():
 
     conditions = []
     params = []
-    cursor.execute("PRAGMA table_info(database_info)")
-    has_tomb_column = any(row[1] == "tomb" for row in cursor.fetchall())
-    if has_tomb_column:
-        conditions.append('COALESCE("tomb", 0) = ?')
-        params.append(1 if dataset == "tomb" else 0)
-    elif dataset == "tomb":
-        conditions.append("1 = 0")
     if dataset == "main":
         conditions.append(
             "LOWER(TRIM(COALESCE(\"main_collection\", ''))) = ?"
