@@ -6,6 +6,37 @@ APP_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = APP_DIR.parent
 DB_PATH = PROJECT_ROOT / "database" / "data.db"
 
+DATASET_OPTIONS = [
+    {
+        "value": "main",
+        "label": "Main",
+        "default_label": "main collection",
+        "description": (
+            "A curated selection of recommended databases, based on curator "
+            "judgement and with an emphasis on highly cited resources."
+        ),
+    },
+    {
+        "value": "full",
+        "label": "Full",
+        "default_label": "all databases",
+        "description": (
+            "All brain-linked splicing databases with a recorded instance of "
+            "availability in at least one of the latest two review rounds "
+            "within an eight-month window."
+        ),
+    },
+    {
+        "value": "tomb",
+        "label": "Tomb",
+        "default_label": "tomb collection",
+        "description": (
+            "Databases that remained inaccessible across more than two "
+            "review rounds within an eight-month window."
+        ),
+    },
+]
+
 app = Flask(__name__)
 
 def split_text(value, sep=";"):
@@ -128,7 +159,7 @@ def contribute():
 def search():
     keyword = request.args.get('q', '').strip()
     dataset = request.args.get("dataset", "full").strip().lower()
-    if dataset not in {"main", "full"}:
+    if dataset not in {option["value"] for option in DATASET_OPTIONS}:
         dataset = "full"
 
     main_cols, expand_cols, visible_cols = load_display_config()
@@ -138,6 +169,13 @@ def search():
 
     conditions = []
     params = []
+    cursor.execute("PRAGMA table_info(database_info)")
+    has_tomb_column = any(row[1] == "tomb" for row in cursor.fetchall())
+    if has_tomb_column:
+        conditions.append('COALESCE("tomb", 0) = ?')
+        params.append(1 if dataset == "tomb" else 0)
+    elif dataset == "tomb":
+        conditions.append("1 = 0")
     if dataset == "main":
         conditions.append(
             "LOWER(TRIM(COALESCE(\"main_collection\", ''))) = ?"
@@ -195,6 +233,12 @@ def search():
         query=data,
         keyword=keyword,
         dataset=dataset,
+        dataset_options=DATASET_OPTIONS,
+        dataset_label=next(
+            option["default_label"]
+            for option in DATASET_OPTIONS
+            if option["value"] == dataset
+        ),
         main_columns=main_cols,
         expand_columns=expand_cols,
         tag_options=tag_options,

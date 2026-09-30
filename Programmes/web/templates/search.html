@@ -6,6 +6,7 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
+    {% set empty_value = 'unknown' if dataset == 'tomb' else '—' %}
     <main class="table">
         <section class="header">
             <h1 class="search-header__keyword">
@@ -13,25 +14,26 @@
                 {% if keyword %}
                     <span style="color: red;">{{ keyword }}</span>
                 {% else %}
-                    <span class="search-header__default" style="color: gray;">(Default: {{ 'main collection' if dataset == 'main' else 'all databases' }})</span>
+                    <span class="search-header__default" style="color: gray;">(Default: {{ dataset_label }})</span>
                 {% endif %}
             </h1>
             <form class="dataset-switch" method="GET" action="{{ url_for('search') }}" aria-label="Dataset">
                 <input type="hidden" name="q" value="{{ keyword }}">
-                <button
-                    class="dataset-switch__option{% if dataset == 'main' %} is-active{% endif %}"
-                    type="submit"
-                    name="dataset"
-                    value="main"
-                    aria-pressed="{{ 'true' if dataset == 'main' else 'false' }}"
-                >Main</button>
-                <button
-                    class="dataset-switch__option{% if dataset == 'full' %} is-active{% endif %}"
-                    type="submit"
-                    name="dataset"
-                    value="full"
-                    aria-pressed="{{ 'true' if dataset == 'full' else 'false' }}"
-                >Full</button>
+                {% for option in dataset_options %}
+                    <div class="dataset-switch__item{% if dataset == option.value %} is-active{% endif %}">
+                        <button
+                            class="dataset-switch__option{% if dataset == option.value %} is-active{% endif %}"
+                            type="submit"
+                            name="dataset"
+                            value="{{ option.value }}"
+                            aria-pressed="{{ 'true' if dataset == option.value else 'false' }}"
+                        >{{ option.label }}</button>
+                        <details class="dataset-switch__help">
+                            <summary aria-label="About the {{ option.label }} collection" title="{{ option.description }}">?</summary>
+                            <p class="dataset-switch__description">{{ option.description }}</p>
+                        </details>
+                    </div>
+                {% endfor %}
             </form>
             <div class="right-content">
                 <label for="rowsSelect">Show the top </label>
@@ -114,7 +116,7 @@
                                     {% if url_value %}
                                         <a href="{{ url_value }}" target="_blank">{{ url_value }}</a>
                                     {% else %}
-                                        <span class="empty-value">&mdash;</span>
+                                        <span class="empty-value">{{ empty_value }}</span>
                                     {% endif %}
                                 {% elif col.render == "doi" %}
                                     {% set doi_value = row[col.name] %}
@@ -130,12 +132,12 @@
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
-                                        <span class="empty-value">&mdash;</span>
+                                        <span class="empty-value">{{ empty_value }}</span>
                                     {% endif %}
                                 {% elif col.render == "access" %}
                                     {% if row[col.name] is none %}
                                         <span class="status-dot status-unknown" title="Unknown"></span>
-                                        <span>Unknown</span>
+                                        <span>{{ 'unknown' if dataset == 'tomb' else 'Unknown' }}</span>
                                     {% elif row[col.name] in (1, True, '1') %}
                                         <span class="status-dot status-ok" title="Accessible"></span>
                                         <span>Accessible</span>
@@ -153,11 +155,11 @@
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
-                                        <span class="empty-value">&mdash;</span>
+                                        <span class="empty-value">{{ empty_value }}</span>
                                     {% endif %}
                                 {% else %}
                                     {% if row[col.name] is none or row[col.name] == '' %}
-                                        <span class="empty-value">&mdash;</span>
+                                        <span class="empty-value">{{ empty_value }}</span>
                                     {% else %}
                                         {{ row[col.name] }}
                                     {% endif %}
@@ -230,7 +232,7 @@
                                                 {% if url_value %}
                                                     <a href="{{ url_value }}" target="_blank">{{ url_value }}</a>
                                                 {% else %}
-                                                    <span class="empty-value">&mdash;</span>
+                                                    <span class="empty-value">{{ empty_value }}</span>
                                                 {% endif %}
                                             {% elif col.render == "doi" %}
                                                 {% set doi_value = row[col.name] %}
@@ -246,12 +248,12 @@
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% else %}
-                                                    <span class="empty-value">&mdash;</span>
+                                                    <span class="empty-value">{{ empty_value }}</span>
                                                 {% endif %}
                                             {% elif col.render == "access" %}
                                                 {% if row[col.name] is none %}
                                                     <span class="status-dot status-unknown" title="Unknown"></span>
-                                                    <span>Unknown</span>
+                                                    <span>{{ 'unknown' if dataset == 'tomb' else 'Unknown' }}</span>
                                                 {% elif row[col.name] in (1, True, '1') %}
                                                     <span class="status-dot status-ok" title="Accessible"></span>
                                                     <span>Accessible</span>
@@ -269,11 +271,11 @@
                                                         {% endif %}
                                                     {% endfor %}
                                                 {% else %}
-                                                    <span class="empty-value">&mdash;</span>
+                                                    <span class="empty-value">{{ empty_value }}</span>
                                                 {% endif %}
                                             {% else %}
                                                 {% if row[col.name] is none or row[col.name] == '' %}
-                                                    <span class="empty-value">&mdash;</span>
+                                                    <span class="empty-value">{{ empty_value }}</span>
                                                 {% else %}
                                                     {{ row[col.name] }}
                                                 {% endif %}
@@ -284,6 +286,10 @@
                             </table>
                         </td>
                     </tr>
+                    {% else %}
+                        <tr class="search-empty-state">
+                            <td colspan="{{ main_colspan }}">No databases found in this collection{% if keyword %} matching your search{% endif %}.</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>

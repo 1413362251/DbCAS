@@ -36,7 +36,7 @@
                     <input type="hidden" name="dataset" value="{{ dataset }}">
                 {% endif %}
                 <div class="InputContainer">
-                    <input placeholder="Search… (default: {{ 'main collection' if dataset is defined and dataset == 'main' else 'all databases' }})" id="searchInput" class="input" name="q" type="text">
+                    <input placeholder="Search… (default: {{ dataset_label if dataset_label is defined else 'all databases' }})" id="searchInput" class="input" name="q" type="text">
                 </div>
                 <button id="searchButton" type="submit">
                     <span class="search-button__inner">

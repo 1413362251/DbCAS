@@ -291,6 +291,27 @@ function sortByNumericColumn(col, direction) {
 
 
 document.addEventListener("DOMContentLoaded", function() {
+    var datasetHelp = document.querySelectorAll(".dataset-switch__help");
+    datasetHelp.forEach(function(help) {
+        help.addEventListener("toggle", function() {
+            if (help.open) {
+                datasetHelp.forEach(function(other) {
+                    if (other !== help) other.open = false;
+                });
+            }
+        });
+    });
+    document.addEventListener("click", function(event) {
+        datasetHelp.forEach(function(help) {
+            if (!help.contains(event.target)) help.open = false;
+        });
+    });
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape") {
+            datasetHelp.forEach(function(help) { help.open = false; });
+        }
+    });
+
     updateRowsDisplay();
 
     var select = document.getElementById("rowsSelect");
