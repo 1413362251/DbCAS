@@ -243,6 +243,23 @@ body.page-search .main-content {
     height: auto;
     min-height: 2.8rem;
 }
+
+body.page-search #search-block {
+    position: relative;
+}
+
+body.page-search .InputContainer {
+    width: 100%;
+    min-width: 0;
+}
+
+body.page-search #searchButton {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 100%;
+}
+
 #search-example{
     width: 60%;
     height: auto;
@@ -1104,7 +1121,7 @@ body.page-search main.table {
     padding: 0.45rem 40px;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 30% minmax(0, 1fr);
     align-items: center;
     column-gap: 1.25rem;
     border-top-right-radius: 30px ;
@@ -1128,7 +1145,7 @@ body.page-search main.table {
     display: inline-grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     justify-self: center;
-    width: 19rem;
+    width: 100%;
     max-width: 100%;
     box-sizing: border-box;
     margin: 0;
@@ -1152,6 +1169,7 @@ body.page-search main.table {
 }
 
 .dataset-switch__option {
+    flex: 1;
     min-width: 0;
     padding: 0.52rem 0.4rem 0.52rem 0.7rem;
     border: 0;
@@ -1430,6 +1448,10 @@ tbody tr:hover {
     flex-wrap: wrap;
   }
 
+  body.page-search #search-block {
+    width: 60%;
+  }
+
   /* Scheme A (search): table wider than viewport scrolls inside .shell, not clipped by body */
   main.table {
     width: 100%;
@@ -1591,6 +1613,15 @@ tbody tr:hover {
     flex-direction: column;
     align-items: stretch;
     gap: 6px;
+  }
+
+  body.page-search #search-block {
+    width: 100%;
+  }
+
+  body.page-search #searchButton {
+    position: static;
+    inset: auto;
   }
 
   .InputContainer {
