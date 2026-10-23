@@ -26,11 +26,40 @@ output in the service's **Logs** page; search for `dbcas.visit` or the request's
   Reported headers are not independently authenticated. The logger deliberately
   does not guess a visitor IP from the leftmost header or an internal proxy.
 
-Render uses Cloudflare and load balancers. The repository does not contain the
-service's live proxy configuration, so no production hop count is assumed here.
+Render uses Cloudflare and load balancers. The hop count is configured on the
+service rather than hardcoded; recheck it whenever the ingress topology changes.
 An example header chain is `forged-entry, visitor, trusted-proxy`; if two entries
 are known to be supplied by trusted infrastructure, a count of `2` selects
 `visitor`. This example is not a claim about the actual Render deployment.
+
+## Verified production configuration (23 October 2026)
+
+The existing DbCAS service in My Workspace is configured through Render's
+service environment variables (no Blueprint or environment group):
+
+```text
+VISITOR_LOG_ENABLED=true
+VISITOR_LOG_PROXY_HOPS=2
+```
+
+Application commit `8c96d8e37b8a651300226cc4acb1341d26e28c1d` is live in deploy
+`dep-dbdplsgm7kps73b96gq0`. Checks from the user's current computer confirmed:
+
+- Both `https://dbcas.net` and `https://dbcas.onrender.com` return HTTP 200.
+- Normal requests contain two forwarded entries. The entry second from the
+  right matches the computer's independently checked public IPv4 address.
+- A deliberately forged leftmost entry produces three entries; the resolved
+  client IP remains the actual public IPv4 on both hostnames.
+- A real homepage reload in the user's Edge browser at **18:37:25 BST**
+  (`17:37:25 UTC`) was recorded with `ip_status=resolved`, `ip_version=4`, and
+  the same public IP. Its Render request ID is `cdbb29ff-41f6-45e6`.
+- No application error logs were found during the deployment/verification window.
+
+The exact public IP is kept in private Render logs and is not copied here.
+Both public hostnames currently have no IPv6 AAAA response, so IPv6-only HTTP
+requests could not reach them. IPv6 parsing is covered by local tests, but an
+end-to-end IPv6 request to these hostnames has **not** been verified. This does
+not prevent the user's normal browser from connecting and being logged via IPv4.
 
 ## Check the deployed configuration
 
