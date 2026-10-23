@@ -2,6 +2,11 @@ from flask import Flask, redirect, render_template, request, url_for
 from pathlib import Path
 import sqlite3
 
+if __package__:
+    from .visitor_logging import init_visitor_logging
+else:
+    from visitor_logging import init_visitor_logging
+
 APP_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = APP_DIR.parent
 DB_PATH = PROJECT_ROOT / "database" / "data.db"
@@ -27,6 +32,7 @@ DATASET_OPTIONS = [
 ]
 
 app = Flask(__name__)
+init_visitor_logging(app)
 
 def split_text(value, sep=";"):
     if value is None:

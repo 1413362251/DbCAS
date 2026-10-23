@@ -19,6 +19,13 @@
                     <p>DbCAS is provided “as is,” without warranties of any kind, express or implied. We accept no liability for errors, omissions, interruptions, or any outcomes arising from the use of information or links contained on this site.</p>
                     <p>Contributors submitting new databases affirm that they have the right to share the information provided. DbCAS reserves the right to review, modify, or decline submissions at its discretion.</p>
                 </section>
+                {% if config.VISITOR_LOG_ENABLED %}
+                <section class="help-card" aria-labelledby="visitor-diagnostics-title">
+                    <h2 id="visitor-diagnostics-title">Visitor diagnostics</h2>
+                    <p>DbCAS records network IP addresses, request times, page routes and response status codes to diagnose website access and visitor statistics. These operational logs are available to site administrators through our hosting provider and are retained for its configured log retention period. Search terms and cookies are not included in these diagnostic records.</p>
+                    <p>The public visitor map shows approximate locations supplied by MapMyVisitors. A recorded IP address does not guarantee an accurate city location; some visits cannot be located.</p>
+                </section>
+                {% endif %}
             </div>
         </main>
     </div>
